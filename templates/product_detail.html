@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<p>{{ product.name }}</p>
+
+    <uL>
+        <li>{{ product.description }}</li>
+        <li>{{ product.price }}</li>
+        <li>Kategorie:</li>
+        {%for item in product.category_set.get_queryset.all %}
+            <p1>{{ item }}</p1>
+        {% endfor %}
+    </uL>
+{% endblock %}

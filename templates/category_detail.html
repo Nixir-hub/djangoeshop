@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<p>{{ category.name }}</p>
+    <uL>
+        {%for item in category.products.all %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </uL>
+{% endblock %}

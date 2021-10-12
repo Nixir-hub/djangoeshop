@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+    <head>
+       <title>Lista produktów</title>
+       <meta charset="utf-8">
+   </head>
+{% block content %}
+    <ul>
+    {%for item in object_list %}
+       <li><a href="{{ item.get_absolute_url }}">{{ item }}</a>
+           {% if user.is_authenticated %}
+               <a href="{{ item.get_delete_url }}"> Delete</a>
+               <a href="{{ item.get_edit_url }}"> Edit</a>
+           {% endif %}
+       </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
