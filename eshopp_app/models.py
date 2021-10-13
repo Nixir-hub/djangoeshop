@@ -42,7 +42,7 @@ class Product(models.Model):
     SKU = models.IntegerField(unique=True)
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
-    img = models.ImageField()
+    img = models.ImageField(upload_to='photos')
 
     def __str__(self):
         return self.name
@@ -62,6 +62,7 @@ class Product(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=64)
     products = models.ManyToManyField(Product)
+    img = models.ImageField(upload_to='photos', null=True)
 
     def __str__(self):
         return self.name

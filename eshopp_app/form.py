@@ -1,8 +1,8 @@
-from django import  forms
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 
-from eshopp_app.models import Cart, Discount, CustomerUser, CartProduct, Product
+
+from eshopp_app.models import CustomerUser, CartProduct
 
 
 class LoginForm(forms.Form):
@@ -14,6 +14,12 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = CustomerUser
         fields = ('username', 'password1', 'password2', )
+
+
+# class PasswordChangeForm(SetPasswordForm):
+#     class Meta:
+#         model = User
+#         fields = ('old_password', 'new_password1', 'new_password2')
 
 
 class UpdateCartForm(forms.ModelForm):

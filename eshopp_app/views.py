@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.views import PasswordContextMixin
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
-from eshopp_app.form import SignUpForm, UpdateCartForm, EditProfilForm
+from eshopp_app.form import SignUpForm, UpdateCartForm
 from eshopp_app.models import Product, Category, Cart, CustomerUser, CartProduct
 
 
@@ -94,3 +94,10 @@ class EditCustomerUserProfil(UpdateView):
     fields = ("username", "first_name", "last_name", "email")
     template_name = "form.html"
     success_url = "/"
+
+
+# class PasswordChangeView(PasswordContextMixin, FormView):
+#     model = User
+#     form_class = PasswordChangeForm
+#     template_name = "form.html"
+#     success_url = "/"

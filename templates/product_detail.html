@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<p>{{ product.name }}</p>
 
+<p>{{ product.name }}</p>
+<img src="{{ product.img.url }}" alt="{{ product.name }}" width="150px">
     <uL>
         <li>Opis: {{ product.description }}</li>
         <li>Cena netto: {{ product.price_netto }}</li>

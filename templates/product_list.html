@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-    <head>
+{% load static %}
+<head>
        <title>Lista produktów</title>
        <meta charset="utf-8">
    </head>
 {% block content %}
     <ul>
+
     {%for item in object_list %}
+        <img src="{{ item.img.url }}" alt="{{ item.name }}" width="150px">
        <li><a href="{{ item.get_absolute_url }}">{{ item }}</a>
 {#           {% if user.is_authenticated %}#}
 {#               <a href="{{ item.get_delete_url }}"> Delete</a>#}

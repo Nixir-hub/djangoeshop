@@ -3,6 +3,7 @@
 <p>koszyk, użytkownika {{ cart.user }}</p>
     <uL>
         {%for item in cart.cartproduct_set.all %}
+            <img src="{{ item.product.img.url }}" alt="{{ item.name }}" width="150px">
             <li><a href="{% url "product-detail" item.product.id %}">{{ item }}</a> Cena za 1szt: {{ item.product.price_netto }} zł Ilość: {{ item.quantity }}
                 {% if user.is_authenticated %}
                    <a href="{{ item.get_delete_url }}"> Delete</a>
@@ -15,4 +16,5 @@
         <p>VAT : {{ summary_vat }} zł</p>
         <p>Razem brutto: {{ brutto_summary }} zł</p>
     </ul>
+    <button>Złóż zamówienie</button>
 {% endblock %}
