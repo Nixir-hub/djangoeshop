@@ -2,8 +2,8 @@
 {% block content %}
 <p>{{ cart.user }}</p>
     <uL>
-        {%for item in cart.products.all %}
-            <li>{{ item }}</li>
+        {%for item in cart.cartproduct_set.all %}
+            <li><a href="{% url "product-detail" item.product.id %}">{{ item }}</a> Cena za 1szt: {{ item.product.price_netto }} Ilość: {{ item.quantity }}</li>
         {% endfor %}
     </uL>
 {% endblock %}

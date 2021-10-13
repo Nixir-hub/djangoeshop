@@ -3,11 +3,17 @@
 <p>{{ product.name }}</p>
 
     <uL>
-        <li>{{ product.description }}</li>
-        <li>{{ product.price }}</li>
+        <li>Opis: {{ product.description }}</li>
+        <li>Cena netto: {{ product.price_netto }}</li>
+        <li>Podatek VAT: {{ product.get_vat_display }}</li>
+        <li>Jest na stanie: {{ product.in_stock }}</li>
         <li>Kategorie:</li>
         {%for item in product.category_set.get_queryset.all %}
-            <p1>{{ item }}</p1>
+            <p1> +{{ item }}</p1>
         {% endfor %}
     </uL>
+    {% if user.is_authenticated %}
+        <a href="{% url "add_to_cart" user.id %}"> Add to cart</a>
+
+    {% endif %}
 {% endblock %}

@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Main Page</title>
     {% if not user.is_authenticated %}
-            <a href="{% url 'login' %}"> zaloguj</a>
+            <a href="{% url 'login' %}"> Zaloguj</a>
+            <a href="{% url "register-view" %}"> Rejestracja</a>
             <a href="{% url "list_products" %}"> Produkty</a>
-{#            <a href="{% url 'categories-list-view' %}"> Kategorie</a>#}
+            <a href="{% url 'categories-list-view' %}"> Kategorie</a>
     {% else %}
             <a href="{% url 'logout' %}">Wyloguj</a>
     {% endif %}
