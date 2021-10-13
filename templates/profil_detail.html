@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <p>{{ customeruser }}</p>
+            <uL>
+                <li>Imie: {{ customeruser.first_name }}</li>
+                <li>Nazwisko: {{ customeruser.last_name }}</li>
+                <li>email: {{ customeruser.email }}</li>
+                <li>Zamówienia:</li>
+                {%for item in customeruser.order_set.all %}
+                    <p1>{{ item }}</p1>
+                {% endfor %}
+            </uL>
+        <a href="{{ customeruser.get_edit_url }}"> Edit</a>
+        <a href="{{ customeruser.get_delete_url }}"> Delete</a>
+        <a href="{{ customeruser.get_edit_pass_url }}"> Zmień hasło</a>
+    {% endif %}
+{% endblock %}

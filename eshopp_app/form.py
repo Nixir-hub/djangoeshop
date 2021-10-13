@@ -22,4 +22,7 @@ class UpdateCartForm(forms.ModelForm):
         fields = ["quantity", "product", "cart"]
 
 
-
+class EditProfilForm(forms.ModelForm):
+    class Meta:
+        model = CustomerUser
+        fields = "__all__"

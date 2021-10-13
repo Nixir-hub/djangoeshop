@@ -15,6 +15,7 @@
         <a href="{% url "list_products" %}"> Produkty</a>
         <a href="{% url 'categories-list-view' %}"> Kategorie</a>
         <a href="{% url "cart-view" user.id %}">Koszyk</a>
+        <a href="{% url "profil-view" user.id %}">Profil</a>
     {% endif %}
 </head>
 <body>

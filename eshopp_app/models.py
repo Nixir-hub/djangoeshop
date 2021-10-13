@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
@@ -16,6 +15,15 @@ class CustomerUser(User):
         discount = Discount.objects.create(user=User.objects.get(id=self.pk), amount=0.3)
         discount.save()
         Cart.objects.create(id=self.pk, discount=discount, user=User.objects.get(id=self.pk)).save()
+
+    def get_delete_url(self):
+        return reverse('delete-user', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-user', args=(self.pk,))
+
+    def get_edit_pass_url(self):
+        return reverse('password_change')
 
 
 class Product(models.Model):
@@ -35,6 +43,7 @@ class Product(models.Model):
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
     img = models.ImageField()
+
     def __str__(self):
         return self.name
 
@@ -53,6 +62,7 @@ class Product(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=64)
     products = models.ManyToManyField(Product)
+
     def __str__(self):
         return self.name
 
@@ -70,6 +80,7 @@ class Discount(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True, primary_key=True)
     is_active = models.BooleanField(default=True)
     amount = models.FloatField()
+
     def __str__(self):
         return f"{self.user} Discount {str(self.amount * 100) + '%' }: {self.is_active}"
 
@@ -82,6 +93,7 @@ class Cart(models.Model):
         related_name='carts',
         through='CartProduct'
     )
+
     def __str__(self):
         return f'{self.user.username},numer id koszyka= {self.user_id}'
 
@@ -90,8 +102,10 @@ class CartProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
     class Meta:
-            models.UniqueConstraint(fields=['product', 'cart'], name='unique_product_cart')
+           models.UniqueConstraint(fields=['product', 'cart'], name='unique_product_cart')
+
     def __str__(self):
         return f"{self.product}"
 
@@ -113,6 +127,7 @@ class Delivery(models.Model):
         (3, "voucherem")
     )
     delivery_method = models.IntegerField(choices=DELIVERY_METHODS, default=1)
+
     def __str__(self):
         return self.name
 
@@ -121,6 +136,7 @@ class Payment(models.Model):
     payment_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=64)
     is_done = models.BooleanField(default=False)
+
     def __str__(self):
         return self.name
 
@@ -136,5 +152,6 @@ class Order(models.Model):
     in_completing = models.BooleanField(default=False)
     is_send = models.BooleanField(default=False)
     in_delivery_done = models.BooleanField(default=False)
+
     def __str__(self):
         return f'{self.order_id}'

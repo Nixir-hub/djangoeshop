@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import User, AbstractUser
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from eshopp_app.form import SignUpForm, UpdateCartForm
+from eshopp_app.form import SignUpForm, UpdateCartForm, EditProfilForm
 from eshopp_app.models import Product, Category, Cart, CustomerUser, CartProduct
 
 
@@ -58,13 +59,6 @@ class CartProductCreateView(CreateView):
     success_url = f"/"
 
 
-class CreateUser(CreateView):
-    model = CustomerUser
-    form_class = SignUpForm
-    template_name = "form.html"
-    success_url = "/login"
-
-
 class EditCartProductView(UpdateView):
     model = CartProduct
     fields = ("quantity",)
@@ -76,3 +70,27 @@ class DelCartProductView(DeleteView):
     model = CartProduct
     template_name = "form.html"
     success_url = f"/"
+
+
+class UserProfilView(DetailView):
+    model = CustomerUser
+    template_name = "profil_detail.html"
+
+
+class CreateUser(CreateView):
+    model = CustomerUser
+    form_class = SignUpForm
+    template_name = "form.html"
+    success_url = "/login"
+
+
+class DeleteCustomerUser(DeleteView):
+    model = User
+    template_name = "form.html"
+
+
+class EditCustomerUserProfil(UpdateView):
+    model = User
+    fields = ("username", "first_name", "last_name", "email")
+    template_name = "form.html"
+    success_url = "/"
