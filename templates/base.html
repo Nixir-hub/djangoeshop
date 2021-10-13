@@ -18,8 +18,14 @@
     {% endif %}
 </head>
 <body>
-{% block content %}
 
+{% block content %}
+{% if not user.is_authenticated %}
+    <p>Witaj, Gościu!</p>
+{% elif user.is_authenticated %}
+    <p>Witaj, {{ user.username }}! </p>
+{% endif %}
 {% endblock %}
+
 </body>
 </html>

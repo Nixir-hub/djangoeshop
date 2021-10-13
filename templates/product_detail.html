@@ -13,7 +13,7 @@
         {% endfor %}
     </uL>
     {% if user.is_authenticated %}
-        <a href="{% url "add_to_cart" user.id %}"> Add to cart</a>
+        <a href="{% url "add_to_cart" user.id %}"> Dodaj do koszyka</a>
 
     {% endif %}
 {% endblock %}

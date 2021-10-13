@@ -3,7 +3,7 @@
 <p>{{ category.name }}</p>
     <uL>
         {%for item in category.products.all %}
-            <li>{{ item }}</li>
+            <li><a href="{% url 'product-detail' item.id %}">{{ item }}</a></li>
         {% endfor %}
     </uL>
 {% endblock %}

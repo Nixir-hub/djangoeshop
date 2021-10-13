@@ -20,3 +20,6 @@ class UpdateCartForm(forms.ModelForm):
     class Meta:
         model = CartProduct
         fields = ["quantity", "product", "cart"]
+
+
+

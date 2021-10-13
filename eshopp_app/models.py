@@ -22,11 +22,11 @@ class Product(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField()
     stock = models.PositiveIntegerField()
-    price_netto = models.DecimalField(decimal_places=2, max_digits=10000)
+    price_netto = models.FloatField()
     VAT_VALUE = (
-        (1, "0,23"),
-        (2, "0,08"),
-        (3, "0,05"),
+        (1, "0.23"),
+        (2, "0.08"),
+        (3, "0.05"),
         (4, "0")
     )
     vat = models.FloatField(choices=VAT_VALUE, default=4)
@@ -92,10 +92,17 @@ class CartProduct(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     class Meta:
             models.UniqueConstraint(fields=['product', 'cart'], name='unique_product_cart')
-
-
     def __str__(self):
         return f"{self.product}"
+
+    def get_absolute_url(self):
+        return reverse('product-detail', args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse('delete-cart-product', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-cart-product', args=(self.pk,))
 
 
 class Delivery(models.Model):
