@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 
-from eshopp_app.models import CustomerUser, CartProduct
+from eshopp_app.models import CustomerUser, CartProduct, Order
 
 
 class LoginForm(forms.Form):
@@ -32,3 +32,10 @@ class EditProfilForm(forms.ModelForm):
     class Meta:
         model = CustomerUser
         fields = "__all__"
+
+
+class CreateOrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ("delivery_method", "payment_id")
+        # exclude = ("is_payed", "in_completing", "is_send", "in_delivery_done", "user_id", "cart_id", "order_id",)

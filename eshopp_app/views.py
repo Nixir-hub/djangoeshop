@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User, AbstractUser
 from django.contrib.auth.views import PasswordContextMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from eshopp_app.form import SignUpForm, UpdateCartForm
-from eshopp_app.models import Product, Category, Cart, CustomerUser, CartProduct
+from eshopp_app.form import SignUpForm, UpdateCartForm, CreateOrderForm
+from eshopp_app.models import Product, Category, Cart, CustomerUser, CartProduct, Order, Payment, Delivery
 
 
 class MainMenuView(View):
@@ -96,8 +96,42 @@ class EditCustomerUserProfil(UpdateView):
     success_url = "/"
 
 
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = "order_details.html"
+
+
+
 # class PasswordChangeView(PasswordContextMixin, FormView):
 #     model = User
 #     form_class = PasswordChangeForm
 #     template_name = "form.html"
 #     success_url = "/"
+
+
+class CreateOrderView(View):
+    def get(self, request):
+        form = CreateOrderForm
+        return render(request, "form.html", {"form": form})
+
+    def post(self, request):
+        payment = Payment.objects.get(id=int(request.POST.get("payment_id")))
+        delivery = Delivery.objects.get(id=int(request.POST.get("delivery_method")))
+        cart = Cart.objects.get(id=2)
+        user = User.objects.get(id=int(cart.user.id))
+        order_id = len(user.order_set.all()) + 1
+        products = cart.cartproduct_set.all()
+        brutto_summary_price =0
+        for product in products:
+            brutto_summary_price += product.quantity * (product.product.price_netto + product.product.price_netto * float(
+                    product.product.get_vat_display()))
+        order = Order.objects.create(payment_id=payment,
+                                     order_id=order_id,
+                                     user_id=user,
+                                     delivery_method=delivery,
+                                     cart_id=Cart.objects.get(id=cart.id),
+                                     price=brutto_summary_price,
+                                     cart_id_id= cart.id
+                                     )
+        order.save()
+        return redirect("/")

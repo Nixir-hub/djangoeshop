@@ -154,5 +154,8 @@ class Order(models.Model):
     is_send = models.BooleanField(default=False)
     in_delivery_done = models.BooleanField(default=False)
 
+    def get_absolute_url(self):
+        return reverse('order-detail', args=(self.pk,))
+
     def __str__(self):
         return f'{self.order_id}'

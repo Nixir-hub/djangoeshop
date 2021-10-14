@@ -8,7 +8,7 @@
                 <li>email: {{ customeruser.email }}</li>
                 <li>Zamówienia:</li>
                 {%for item in customeruser.order_set.all %}
-                    <p1>{{ item }}</p1>
+                    <p1><a href="{{ item.get_absolute_url }}">{{ item }}</a></p1>
                 {% endfor %}
             </uL>
         <a href="{{ customeruser.get_edit_url }}"> Edit</a>
