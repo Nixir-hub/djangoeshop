@@ -5,6 +5,10 @@ from django.urls import reverse
 
 
 class CustomerUser(User):
+    adres = models.CharField(max_length=255, null=True)
+    company_adres = models.TextField(null=True)
+    phone = models.PositiveIntegerField(max_length=9, null=True)
+
     class Meta:
         permissions = (
             ('permission_cart_view', 'Watch self cart'),
@@ -106,6 +110,36 @@ class Cart(models.Model):
     def __str__(self):
         return f'{self.user.username},numer id koszyka= {self.user_id}'
 
+    def get_summary_vat(self):
+        products = self.cartproduct_set.all()
+        summary_vat = 0
+        for product in products:
+            summary_vat += product.quantity * (
+                        product.product.price_netto * float(product.product.get_vat_display()))
+        return summary_vat
+
+    def get_summary_netto(self):
+        products = self.cartproduct_set.all()
+        netto_summary_price = 0
+        for product in products:
+            netto_summary_price += product.product.price_netto * product.quantity
+        return netto_summary_price
+
+    def get_summary_brutto(self):
+        products = self.cartproduct_set.all()
+        brutto_summary_price = 0
+        for product in products:
+            brutto_summary_price += product.quantity * (
+                    product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
+        return brutto_summary_price
+
+    def get_summary_brutto_after_discount(self):
+        products = self.cartproduct_set.all()
+        brutto_summary_price = 0
+        for product in products:
+            brutto_summary_price += product.quantity * (product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
+        return brutto_summary_price - brutto_summary_price * self.user.discount_set.first().amount
+
 
 class CartProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -166,4 +200,4 @@ class Order(models.Model):
         return reverse('order-detail', args=(self.pk,))
 
     def __str__(self):
-        return f'{self.order_id}'
+        return f' {self.order_id}'

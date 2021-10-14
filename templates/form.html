@@ -1,15 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
     <table>
-        <div class="card">
-            <div class="card-body">
-                <form method="POST">
-                        {% csrf_token %}
-                            <div class="form-group">
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Zatwierdź!</button>
-                </form>
-            </div>
-        </div>
+        <form id="form" method="POST">
+                {% csrf_token %}
+                {{ form.as_table }}
+
+        </form>
     </table>
+    <button form="form" type="submit" class="btn btn-primary btn-block">Zatwierdź!</button>
 {% endblock %}

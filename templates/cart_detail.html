@@ -17,12 +17,12 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h1 class="card-header">Razem:</h1>
-                    <p class="card-text">Razem netto: {{ netto_summary }} zł</p>
-                    <p class="card-text">VAT : {{ summary_vat }} zł</p>
-                    <p class="card-text">Razem brutto: {{ brutto_summary }} zł</p>
+                    <p class="card-text">Razem netto: {{ cart.get_summary_netto }} zł</p>
+                    <p class="card-text">VAT : {{ cart.get_summary_vat }} zł</p>
+                    <p class="card-text">Razem brutto: {{ cart.get_summary_brutto }} zł</p>
                     {% if cart.discount.is_active %}
                     <p class="card-text">Kod rabatowy: {{ cart.discount }}</p>
-                    <p class="card-text">Cena po rabacie: {{ after_discount }}</p>
+                    <p class="card-text">Cena po rabacie: {{ cart.get_summary_brutto_after_discount }}</p>
                     <a href="{% url "create-order" %}" class="btn btn-primary" >Złóż zamówienie!</a>
             {% endif %}
             </div>

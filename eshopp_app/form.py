@@ -13,7 +13,7 @@ class LoginForm(forms.Form):
 class SignUpForm(UserCreationForm):
     class Meta:
         model = CustomerUser
-        fields = ('username', 'password1', 'password2', )
+        fields = ('username', "first_name", "last_name", "email", 'password1', 'password2', "adres", "phone")
 
 
 # class PasswordChangeForm(SetPasswordForm):
@@ -25,7 +25,7 @@ class SignUpForm(UserCreationForm):
 class UpdateCartForm(forms.ModelForm):
     class Meta:
         model = CartProduct
-        fields = ["quantity", "product", "cart"]
+        fields = ("quantity",)
 
 
 class EditProfilForm(forms.ModelForm):
@@ -37,5 +37,5 @@ class EditProfilForm(forms.ModelForm):
 class CreateOrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ("delivery_method", "payment_id")
+        fields = "__all__"
         # exclude = ("is_payed", "in_completing", "is_send", "in_delivery_done", "user_id", "cart_id", "order_id",)
