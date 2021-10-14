@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User, AbstractUser
 from django.contrib.auth.views import PasswordContextMixin
@@ -45,10 +45,18 @@ class CartDetailsView(View):
              netto_summary_price += product.product.price_netto * product.quantity
              brutto_summary_price += product.quantity * (product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
              summary_vat += product.quantity * (product.product.price_netto * float(product.product.get_vat_display()))
+        if cart.discount.is_active == True:
+            summary_after_discount = brutto_summary_price - brutto_summary_price * cart.discount.amount
+            return render(request, "cart_detail.html", {"cart": cart,
+                                                    "netto_summary": netto_summary_price,
+                                                    "brutto_summary": brutto_summary_price,
+                                                    "summary_vat": summary_vat,
+                                                    "after_discount": summary_after_discount
+                                                    })
         return render(request, "cart_detail.html", {"cart": cart,
                                                     "netto_summary": netto_summary_price,
                                                     "brutto_summary": brutto_summary_price,
-                                                    "summary_vat": summary_vat
+                                                    "summary_vat": summary_vat,
                                                     })
 
 

@@ -47,6 +47,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_brutto_price(self):
+        brutto = self.price_netto + float(self.get_vat_display()) * self.price_netto
+        return brutto
+
+    def get_procent_vat(self):
+        vat = str(float(self.get_vat_display()) * 100) + "%"
+        return vat
+
     def get_absolute_url(self):
         return reverse('product-detail', args=(self.pk,))
 
@@ -83,7 +91,7 @@ class Discount(models.Model):
     amount = models.FloatField()
 
     def __str__(self):
-        return f"{self.user} Discount {str(self.amount * 100) + '%' }: {self.is_active}"
+        return f"Zniżka {str(self.amount * 100) + '%'}"
 
 
 class Cart(models.Model):

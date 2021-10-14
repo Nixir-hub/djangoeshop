@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eshopp_app.apps.EshoppAppConfig',
+    "crispy_forms"
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,4 @@ MEDIA_ROOT = (
 BASE_DIR
 )
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

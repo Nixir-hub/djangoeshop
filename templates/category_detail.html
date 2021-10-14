@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<p>{{ category.name }}</p>
-    <uL>
-        {%for item in category.products.all %}
-            <li><a href="{% url 'product-detail' item.id %}">{{ item }}</a></li>
-        {% endfor %}
-    </uL>
+        <ul class="list-group">
+            <ul class="list-group-item">{{ category.name }}
+            {%for item in category.products.all %}
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        {% if item.price_netto %}
+                        <p class="card-text">Cena netto: {{ item.price_netto }} zł </p>
+                        {% endif %}
+                        <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
+                    </div>
+                </div>
+            {% endfor %}
+            </ul>
+        </ul>
 {% endblock %}
