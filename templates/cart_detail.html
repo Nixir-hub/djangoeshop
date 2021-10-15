@@ -15,7 +15,6 @@
                 <a href="{{ item.add_quantity }}">+</a>
                 {% if user.is_authenticated %}
                    <a class="btn btn-danger" href="{{ item.get_delete_url }}"> Usuń</a>
-                   <a class="btn btn-dark" href="{{ item.get_edit_url }}"> Edit</a>
                {% endif %}
             </li>
         {% endfor %}

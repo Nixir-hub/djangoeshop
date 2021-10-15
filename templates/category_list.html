@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <table class="container">
+        <div class="jumbotron">
+                <div class="container">
+                    <h1 class="display-6">Produkty</h1>
+                </div>
+        </div>
+        {%for item in object_list %}
+            <td>
+                 <div class="card text-center" style="width: 18rem;">
+                     <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
+                     <div class="card-body">
+                         <h5 class="card-title">{{ item.name }}</h5>
+                             {% if item.price_netto %}
+                                <p class="card-text">Cena: {{ item.get_brutto_price }} zł </p>
+                             {% endif %}
+                         <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
+                     </div>
+                </div>
+            </td>
+        {% endfor %}
+    </table>
+{% endblock %}

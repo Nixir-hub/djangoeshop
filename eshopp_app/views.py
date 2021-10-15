@@ -26,7 +26,7 @@ class ProductDetailsView(DetailView):
 
 class CategoriesListView(ListView):
     model = Category
-    template_name = "product_list.html"
+    template_name = "category_list.html"
 
 
 class CategoryDetailsView(DetailView):
@@ -81,11 +81,26 @@ class UserProfilView(LoginRequiredMixin, DetailView):
         return self.object
 
 
-class CreateUser(CreateView):
-    model = User
-    form_class = SignUpForm
-    template_name = "form.html"
-    success_url = "/login"
+class CreateUser(View):
+    def get(self, request):
+        form = SignUpForm()
+        return render(request, "registration/signup.html", {"form": form})
+
+    def post(self, request):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create(username=request.POST.get("username"),
+                                       first_name=request.POST.get("first_name"),
+                                       last_name=request.POST.get("last_name"),
+                                       email=request.POST.get("email"))
+            user.set_password(request.POST.get("password1"))
+            user.save()
+            discount = Discount.objects.create(user=User.objects.get(id=user.id), amount=0.3)
+            discount.save()
+            Cart.objects.create(user=User.objects.get(id=user.id), discount=Discount.objects.get(user=User.objects.get(id=user.id))).save()
+            Profile.objects.create(user=User.objects.get(id=user.id)).save()
+            return redirect("/login")
+        return render(request, 'form.html', {'form': form})
 
 
 class DeleteUserView(LoginRequiredMixin, DeleteView):
