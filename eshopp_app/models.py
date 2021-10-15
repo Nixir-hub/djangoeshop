@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse
 
 
@@ -54,7 +55,6 @@ class Product(models.Model):
 
     def add_to_cart(self):
         return reverse('add_to_cart', args=(self.pk,))
-
 
 
 class Category(models.Model):
@@ -147,6 +147,11 @@ class CartProduct(models.Model):
     def get_edit_url(self):
         return reverse('edit-cart-product', args=(self.pk,))
 
+    def add_quantity(self):
+        return reverse("add_to_cart", args=(self.product.id,))
+
+    def remove_quantity(self):
+        return reverse("edit-cart-product", args=(self.product.pk,))
 
 class Delivery(models.Model):
     name = models.CharField(max_length=64)

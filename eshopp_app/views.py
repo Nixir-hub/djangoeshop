@@ -55,11 +55,15 @@ class CartProductCreateView(LoginRequiredMixin, View):
             return redirect("/cart")
 
 
-class EditCartProductView(LoginRequiredMixin, UpdateView):
-    model = CartProduct
-    fields = "__all__"
-    template_name = "form.html"
-    success_url = f"/cart"
+class RemoveCartProductView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        try:
+            if CartProduct.objects.get(product=Product.objects.get(id=int(pk))):
+                CartProduct.objects.update(quantity=CartProduct.objects.get(product=Product.objects.get(id=int(pk))).quantity - 1)
+                return redirect("/cart")
+        except Exception:
+            CartProduct.objects.get(product=Product.objects.get(id=int(pk))).delete()
+            return redirect("/cart")
 
 
 class DelCartProductView(LoginRequiredMixin, DeleteView):
