@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
@@ -43,22 +43,23 @@ class CartDetailsView(LoginRequiredMixin, DetailView):
         return self.object
 
 
-class CartProductCreateView(LoginRequiredMixin, CreateView):
-    model = CartProduct
-    form_class = UpdateCartForm
-    template_name = "form.html"
-    success_url = f"/"
-
-    def form_valid(self, form):
-        form.instance.quantity = 1
-        return super().form_valid(form)
+class CartProductCreateView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        obj = self.request.user
+        try:
+            if CartProduct.objects.get(product=Product.objects.get(id=int(pk))):
+                CartProduct.objects.update(quantity=CartProduct.objects.get(product=Product.objects.get(id=int(pk))).quantity + 1)
+                return redirect("/cart")
+        except Exception:
+            CartProduct.objects.create(cart=obj.cart, product=Product.objects.get(id=int(pk)), quantity=1)
+            return redirect("/cart")
 
 
 class EditCartProductView(LoginRequiredMixin, UpdateView):
     model = CartProduct
     fields = "__all__"
     template_name = "form.html"
-    success_url = f"/"
+    success_url = f"/cart"
 
 
 class DelCartProductView(LoginRequiredMixin, DeleteView):

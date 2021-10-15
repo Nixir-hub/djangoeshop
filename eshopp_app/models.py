@@ -52,13 +52,9 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product-detail', args=(self.pk,))
 
-    # def get_delete_url(self):
-    #     return reverse('delete-product', args=(self.pk,))
-    #
-    # def get_edit_url(self):
-    #     return reverse('edit-product', args=(self.pk,))
     def add_to_cart(self):
         return reverse('add_to_cart', args=(self.pk,))
+
 
 
 class Category(models.Model):

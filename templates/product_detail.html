@@ -23,6 +23,6 @@
         </li>
     </uL>
     {% if user.is_authenticated %}
-        <li class="list-group-item"><a class="btn btn-primary" href="{% url "add_to_cart" user.id %}"> Dodaj do koszyka</a></li>
+        <li class="list-group-item"><a class="btn btn-primary" href="{{ product.add_to_cart }}"> Dodaj do koszyka</a></li>
     {% endif %}
 {% endblock %}
