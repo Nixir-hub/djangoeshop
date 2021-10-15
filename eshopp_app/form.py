@@ -6,8 +6,8 @@ from eshopp_app.models import CartProduct, Order
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label=("Nazwa użytkownika"))
+    password = forms.CharField(label=("Hasło"), widget=forms.PasswordInput)
 
 
 class SignUpForm(UserCreationForm):
@@ -15,6 +15,9 @@ class SignUpForm(UserCreationForm):
         model = User
         form = "signup.html"
         fields = ('username', "first_name", "last_name", "email", 'password1', 'password2')
+
+
+
 
 
 # class PasswordChangeForm(SetPasswordForm):

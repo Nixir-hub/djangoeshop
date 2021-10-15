@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <img class="card-img-top" src="{{ product.img.url }}" alt="{{ product.name }}" width="150px">
+    <img class="card-img-top" src="{{ product.img.url }}" alt="{{ product.name }}" width="100%">
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
             <h1 class="display-4">{{ product.name }}</h1>
@@ -23,6 +23,6 @@
         </li>
     </uL>
     {% if user.is_authenticated %}
-        <li class="list-group-item"><a href="{% url "add_to_cart" user.id %}"> Dodaj do koszyka</a></li>
+        <li class="list-group-item"><a class="btn btn-primary" href="{% url "add_to_cart" user.id %}"> Dodaj do koszyka</a></li>
     {% endif %}
 {% endblock %}

@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from eshopp_app.form import SignUpForm, UpdateCartForm, CreateOrderForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
+from eshopp_app.form import SignUpForm, UpdateCartForm, CreateOrderForm, LoginForm
 from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Discount, Profile
 
 
@@ -76,7 +76,7 @@ class UserProfilView(LoginRequiredMixin, DetailView):
 
 
 class CreateUser(CreateView):
-    model = User
+    model = Profile
     form_class = SignUpForm
     template_name = "form.html"
     success_url = "/login"
