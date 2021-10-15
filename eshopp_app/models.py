@@ -14,6 +14,12 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+    def get_absolute_url(self):
+        return reverse('profil-view', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-user', args=(self.pk,))
+
 
 class Product(models.Model):
     name = models.CharField(max_length=64)

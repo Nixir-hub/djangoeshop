@@ -2,23 +2,23 @@
 {% block content %}
     {% if user.is_authenticated %}
         <div class="jumbotron">
-            <h1>{{ customeruser }}</h1>
+            <h1>{{ user }}</h1>
             <p1>Dane konta</p1>
         </div>
             <ul class="list-group">
-                <li class="list-group-item">Imie: {{ customeruser.first_name }}</li>
-                <li class="list-group-item">Nazwisko: {{ customeruser.last_name }}</li>
-                <li class="list-group-item">email: {{ customeruser.email }}</li>
-                <li class="list-group-item">adres: {{ customeruser.adres }}</li>
-                <li class="list-group-item">telefon: {{ customeruser.phone }}</li>
+                <li class="list-group-item">Imie: {{ user.first_name }}</li>
+                <li class="list-group-item">Nazwisko: {{ user.last_name }}</li>
+                <li class="list-group-item">email: {{ user.email }}</li>
+                <li class="list-group-item">adres: {{ user.profile.adres }}</li>
+                <li class="list-group-item">telefon: {{ user.profile.phone }}</li>
                 <li class="list-group-item">Zamówienia:
-                {%for item in customeruser.order_set.all %}
+                {%for item in user.order_set.all %}
                     <a href="{{ item.get_absolute_url }}">{{ item }}</a>
                 {% endfor %}
                 </li>
             </ul>
-        <a class="btn btn-dark" href="{{ customeruser.get_edit_url }}"> Edytuj dane</a>
-        <a class="btn btn-danger" href="{{ customeruser.get_delete_url }}"> Usuń</a>
-        <a class="btn btn-warning" href="{{ customeruser.get_edit_pass_url }}"> Zmień hasło</a>
+        <a class="btn btn-dark" href="{{ user.profile.get_edit_url }}"> Edytuj dane</a>
+        <a class="btn btn-danger" href="/del_profil/{{ user.id }}/"> Usuń</a>
+        <a class="btn btn-warning" href="/password_change/"> Zmień hasło</a>
     {% endif %}
 {% endblock %}

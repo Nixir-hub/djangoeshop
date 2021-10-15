@@ -20,7 +20,7 @@ from django.urls import path, include
 
 from eshopp_app.views import MainMenuView, ProductsListView, CategoriesListView, CategoryDetailsView, \
     ProductDetailsView, CartDetailsView, CreateUser, CartProductCreateView, EditCartProductView, DelCartProductView, \
-    UserProfilView, DeleteCustomerUser, EditCustomerUserProfil, OrderDetailView, CreateOrderView
+    UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,8 +36,8 @@ urlpatterns = [
     path('edit_cart/<int:pk>', EditCartProductView.as_view(), name="edit-cart-product"),
     path("del_card_prod/<int:pk>/", DelCartProductView.as_view(), name="delete-cart-product"),
     path("profil_details/", UserProfilView.as_view(), name="profil-view"),
-    path("del_profil/<int:pk>/", DeleteCustomerUser.as_view(), name="delete-user"),
-    path("edit_profil/<int:pk>/", EditCustomerUserProfil.as_view(), name="edit-user"),
+    path("del_profil/<int:pk>/", DeleteUserView.as_view(), name="delete-user"),
+    path("edit_profil/<int:pk>/", EditUserProfil.as_view(), name="edit-user"),
     path("create_order/", CreateOrderView.as_view(), name="create-order"),
     path("order_detail/<int:pk>/", OrderDetailView.as_view(), name="order-detail")
 ]

@@ -1,10 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
+from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from eshopp_app.form import SignUpForm, UpdateCartForm, CreateOrderForm, LoginForm
+from eshopp_app.form import SignUpForm, UpdateCartForm, CreateOrderForm, LoginForm, PasswordChangeForm
 from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Discount, Profile
 
 
@@ -55,15 +56,15 @@ class CartProductCreateView(LoginRequiredMixin, CreateView):
 
 class EditCartProductView(LoginRequiredMixin, UpdateView):
     model = CartProduct
-    fields = ("quantity",)
+    fields = "__all__"
     template_name = "form.html"
     success_url = f"/"
 
 
 class DelCartProductView(LoginRequiredMixin, DeleteView):
     model = CartProduct
-    template_name = "form.html"
-    success_url = f"/"
+    template_name = "del_prod_from_cart_form.html"
+    success_url = f"/cart"
 
 
 class UserProfilView(LoginRequiredMixin, DetailView):
@@ -76,32 +77,23 @@ class UserProfilView(LoginRequiredMixin, DetailView):
 
 
 class CreateUser(CreateView):
-    model = Profile
+    model = User
     form_class = SignUpForm
     template_name = "form.html"
     success_url = "/login"
 
-    def get_success_url(self):
-        obj = self.get_object()
-        discount = Discount.objects.create(user=obj, amount=0.3).save()
-        Cart.objects.create(discount=discount, user=obj).save()
-        return reverse("/login")
 
-
-class DeleteCustomerUser(LoginRequiredMixin, DeleteView):
+class DeleteUserView(LoginRequiredMixin, DeleteView):
     model = User
-    template_name = "form.html"
+    template_name = "del_form.html"
     success_url = "/"
 
 
-class EditCustomerUserProfil(LoginRequiredMixin, UpdateView):
-    model = User
-    fields = ("first_name", "last_name", "email", "adres", "phone")
+class EditUserProfil(LoginRequiredMixin, UpdateView):
+    model = Profile
+    fields = ("adres", "phone")
     template_name = "form.html"
-
-    def get_success_url(self):
-        obj = self.get_object()
-        return reverse("profil-view", args=(obj.id,))
+    success_url = "/profil_details/"
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -116,8 +108,8 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
     success_url = "/"
 
 
-# class PasswordChangeView(PasswordContextMixin, FormView):
-#     model = User
-#     form_class = PasswordChangeForm
-#     template_name = "form.html"
-#     success_url = "/"
+class PasswordChangeView(FormView):
+    model = User
+    form_class = PasswordChangeForm
+    template_name = "form.html"
+    success_url = "/"
