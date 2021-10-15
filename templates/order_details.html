@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<p>zamówienie, użytkownika {{ order.user_id.username }}</p>
-    <uL>
+<h1 class="jumbotron">Szczegóły zamówienia nr.{{ order.order_id }}</h1>
+    <ul class="list-group">
         {%for item in order.cart_id.cartproduct_set.all %}
-            <img src="{{ item.product.img.url }}" alt="{{ item.name }}" width="150px">
-            <li><a href="{% url "product-detail" item.product.id %}">{{ item }}</a> Cena za 1szt: {{ item.product.price_netto }} zł Ilość: {{ item.quantity }}
+            <li class="list-group-item">
+                <img class="content left-" src="{{ item.product.img.url }}" alt="{{ item.name }}" width="150px">
+                <a href="{% url "product-detail" item.product.id %}">{{ item }}</a> Cena za 1szt: {{ item.product.price_netto }} zł Ilość: {{ item.quantity }}
             </li>
         {% endfor %}
-    <p>Razem do zapłaty:</p>
-        <p>Razem netto: {{ netto_summary }} zł</p>
-        <p>VAT : {{ summary_vat }} zł</p>
-        <p>Razem brutto: {{ brutto_summary }} zł</p>
+    <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h1 class="card-header">Razem:</h1>
+                    <p class="card-text">Razem netto: {{ order.cart_id.get_summary_netto }} zł</p>
+                    <p class="card-text">VAT : {{ order.cart_id.get_summary_vat }} zł</p>
+                    <p class="card-text font-weight-bold">Razem brutto: {{ order.cart_id.get_summary_brutto }} zł</p>
+                    {% if order.cart_id.discount.is_active %}
+                    <p class="card-text">Kod rabatowy: {{ order.cart_id.discount }}</p>
+                    <p class="card-text font-weight-bold">Cena po rabacie: {{ order.cart_id.get_summary_brutto_after_discount }} zł</p>
+                     {% endif %}
+            </div>
+    </div>
     </ul>
 {% endblock %}

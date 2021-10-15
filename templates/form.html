@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-    <table>
-        <form id="form" method="POST">
-                {% csrf_token %}
-                {{ form.as_table }}
+        <div class="container ">
+            <div class="card center" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Logowanie</h5>
 
-        </form>
-    </table>
-    <button form="form" type="submit" class="btn btn-primary btn-block">Zatwierdź!</button>
+                    <form id="form" method="POST">
+                            {% csrf_token %}
+                            {{ form.as_table }}
+                    </form>
+                </div>
+            <button form="form" type="submit" class="btn btn-primary btn-block">Zatwierdź!</button>
+        </div>
 {% endblock %}

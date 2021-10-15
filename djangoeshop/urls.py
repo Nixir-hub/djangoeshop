@@ -27,19 +27,19 @@ urlpatterns = [
     path('', MainMenuView.as_view(), name="main-menu"),
     path('', include('django.contrib.auth.urls')),
     path('products/', ProductsListView.as_view(),  name="list_products"),
-    path('product/<int:pk>', ProductDetailsView.as_view(), name="product-detail"),
+    path('product/<int:pk>/', ProductDetailsView.as_view(), name="product-detail"),
     path("categories/", CategoriesListView.as_view(), name="categories-list-view"),
-    path('category/<int:pk>', CategoryDetailsView.as_view(), name="category-details"),
-    path("cart/<int:pk>", CartDetailsView.as_view(), name="cart-view"),
-    path('add_to_cart/<int:pk>', CartProductCreateView.as_view(), name="add_to_cart"),
-    path('register', CreateUser.as_view(), name="register-view"),
+    path('category/<int:pk>/', CategoryDetailsView.as_view(), name="category-details"),
+    path("cart", CartDetailsView.as_view(), name="cart-view"),
+    path('add_to_cart/<int:pk>/', CartProductCreateView.as_view(), name="add_to_cart"),
+    path('register/', CreateUser.as_view(), name="register-view"),
     path('edit_cart/<int:pk>', EditCartProductView.as_view(), name="edit-cart-product"),
-    path("del_card_prod/<int:pk>", DelCartProductView.as_view(), name="delete-cart-product"),
-    path("profil_details/<int:pk>", UserProfilView.as_view(), name="profil-view"),
-    path("del_profil/<int:pk>", DeleteCustomerUser.as_view(), name="delete-user"),
-    path("edit_profil/<int:pk>", EditCustomerUserProfil.as_view(), name="edit-user"),
+    path("del_card_prod/<int:pk>/", DelCartProductView.as_view(), name="delete-cart-product"),
+    path("profil_details/", UserProfilView.as_view(), name="profil-view"),
+    path("del_profil/<int:pk>/", DeleteCustomerUser.as_view(), name="delete-user"),
+    path("edit_profil/<int:pk>/", EditCustomerUserProfil.as_view(), name="edit-user"),
     path("create_order/", CreateOrderView.as_view(), name="create-order"),
-    path("order_detail/<int:pk>", OrderDetailView.as_view(), name="order-detail")
+    path("order_detail/<int:pk>/", OrderDetailView.as_view(), name="order-detail")
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

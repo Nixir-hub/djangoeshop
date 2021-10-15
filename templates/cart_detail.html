@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+
 {% block content %}
+    <div class="container"></div>
 <h1 class="jumbotron">Koszyk</h1>
     <ol class="list-group">
         {%for item in cart.cartproduct_set.all %}
@@ -22,9 +24,9 @@
                     <p class="card-text">Razem brutto: {{ cart.get_summary_brutto }} zł</p>
                     {% if cart.discount.is_active %}
                     <p class="card-text">Kod rabatowy: {{ cart.discount }}</p>
-                    <p class="card-text">Cena po rabacie: {{ cart.get_summary_brutto_after_discount }}</p>
+                    <p class="card-text">Cena po rabacie: {{ cart.get_summary_brutto_after_discount }} zł</p>
+                     {% endif %}
                     <a href="{% url "create-order" %}" class="btn btn-primary" >Złóż zamówienie!</a>
-            {% endif %}
             </div>
         </div>
     </div>

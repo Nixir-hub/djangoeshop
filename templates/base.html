@@ -17,8 +17,8 @@
             {% if user.is_authenticated %}
                 <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
                 <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
-                <a class="navbar-brand" href="{% url "cart-view" user.id %}">Koszyk</a>
-                <a class="navbar-brand" href="{% url "profil-view" user.id %}">Profil</a>
+                <a class="navbar-brand" href="{% url "cart-view"%}">Koszyk</a>
+                <a class="navbar-brand" href="{% url "profil-view" %}">Profil</a>
             {% endif %}
     </nav>
 </head>

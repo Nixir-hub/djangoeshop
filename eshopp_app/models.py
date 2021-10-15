@@ -1,33 +1,18 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 
-class CustomerUser(User):
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     adres = models.CharField(max_length=255, null=True)
     company_adres = models.TextField(null=True)
-    phone = models.PositiveIntegerField(max_length=9, null=True)
+    phone = models.PositiveIntegerField(null=True)
 
-    class Meta:
-        permissions = (
-            ('permission_cart_view', 'Watch self cart'),
-        )
-
-    def save(self, *args, **kwargs):
-        super(User, self).save(self, *args, **kwargs)
-        discount = Discount.objects.create(user=User.objects.get(id=self.pk), amount=0.3)
-        discount.save()
-        Cart.objects.create(id=self.pk, discount=discount, user=User.objects.get(id=self.pk)).save()
-
-    def get_delete_url(self):
-        return reverse('delete-user', args=(self.pk,))
-
-    def get_edit_url(self):
-        return reverse('edit-user', args=(self.pk,))
-
-    def get_edit_pass_url(self):
-        return reverse('password_change')
+    def __str__(self):
+        return self.user.username
 
 
 class Product(models.Model):
@@ -42,7 +27,6 @@ class Product(models.Model):
         (4, "0")
     )
     vat = models.FloatField(choices=VAT_VALUE, default=4)
-    code_EAN = models.IntegerField()
     SKU = models.IntegerField(unique=True)
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
@@ -100,7 +84,7 @@ class Discount(models.Model):
 
 class Cart(models.Model):
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     products = models.ManyToManyField(
         Product,
         related_name='carts',
@@ -116,14 +100,14 @@ class Cart(models.Model):
         for product in products:
             summary_vat += product.quantity * (
                         product.product.price_netto * float(product.product.get_vat_display()))
-        return summary_vat
+        return round(summary_vat, 2)
 
     def get_summary_netto(self):
         products = self.cartproduct_set.all()
         netto_summary_price = 0
         for product in products:
             netto_summary_price += product.product.price_netto * product.quantity
-        return netto_summary_price
+        return round(netto_summary_price, 2)
 
     def get_summary_brutto(self):
         products = self.cartproduct_set.all()
@@ -131,14 +115,14 @@ class Cart(models.Model):
         for product in products:
             brutto_summary_price += product.quantity * (
                     product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
-        return brutto_summary_price
+        return round(brutto_summary_price, 2)
 
     def get_summary_brutto_after_discount(self):
         products = self.cartproduct_set.all()
         brutto_summary_price = 0
         for product in products:
             brutto_summary_price += product.quantity * (product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
-        return brutto_summary_price - brutto_summary_price * self.user.discount_set.first().amount
+        return round(brutto_summary_price - brutto_summary_price * self.user.discount_set.first().amount, 2)
 
 
 class CartProduct(models.Model):
@@ -176,20 +160,18 @@ class Delivery(models.Model):
 
 
 class Payment(models.Model):
-    payment_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=64)
-    is_done = models.BooleanField(default=False)
+    is_done = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
 
 
 class Order(models.Model):
-    payment_id = models.ForeignKey(Payment, on_delete=models.CASCADE, default=-1)
-    order_id = models.IntegerField(auto_created=True, unique=True)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, default=-1)
+    order = models.IntegerField(unique=True)
     delivery_method = models.ForeignKey(Delivery, on_delete=models.CASCADE)
-    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE, primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     price = models.FloatField()
     is_payed = models.BooleanField(default=False)
     in_completing = models.BooleanField(default=False)
@@ -200,4 +182,4 @@ class Order(models.Model):
         return reverse('order-detail', args=(self.pk,))
 
     def __str__(self):
-        return f' {self.order_id}'
+        return f' {self.order}'

@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-        <ul class="list-group">
-            <ul class="list-group-item">{{ category.name }}
+        <table>
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h1 class="display-4">{{ category.name }}</h1>
+                </div>
+            </div>
             {%for item in category.products.all %}
-                <div class="card" style="width: 18rem;">
+                <td>
+                <div class="card text-center" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ item.name }}</h5>
                         {% if item.price_netto %}
-                        <p class="card-text">Cena netto: {{ item.price_netto }} zł </p>
+                        <p class="card-text">Cena: {{ item.get_brutto_price }} zł </p>
                         {% endif %}
                         <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
                     </div>
                 </div>
+                </td>
             {% endfor %}
-            </ul>
-        </ul>
+        </table>
 {% endblock %}
