@@ -36,7 +36,7 @@ class EditProductView(UpdateView):
     success_url = "/products"
 
 
-class DeleteProductView(PermissionRequiredMixin, DeleteView):
+class DeleteProductView( DeleteView):
     model = Product
     template_name = "del_form.html"
     success_url = "/products"
@@ -83,31 +83,30 @@ class CartDetailsView(LoginRequiredMixin, DetailView):
 
 class CartProductCreateView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        self.obj = self.request.user
-        self.product = Product.objects.get(id=int(pk))
+        product = Product.objects.get(id=pk)
+        user = self.request.user
         try:
-            self.cartprod = CartProduct.objects.get(product=self.product, cart=self.obj.cart)
-            if CartProduct.objects.get(product=self.product, cart=self.obj.cart):
-                self.update = CartProduct.objects.update(product=self.product, cart=self.obj.cart,
-                                                         quantity=self.cartprod.quantity + 1)
-                return redirect("/cart")
+            cart_product = CartProduct.objects.get(product=product, cart=user.cart)
+            cart_product.quantity +=1
+            cart_product.save()
+            return redirect("/cart")
         except Exception:
-            self.creation = CartProduct.objects.create(cart=self.obj.cart, product=self.product, quantity=1)
+            self.creation = CartProduct.objects.create(cart=user.cart, product=product, quantity=1)
             return redirect("/cart")
 
 
 class RemoveCartProductView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        self.obj = self.request.user
-        self.product = Product.objects.get(id=int(pk))
+        product = Product.objects.get(id=pk)
+        user = self.request.user
         try:
-            self.cartprod = CartProduct.objects.get(product=self.product, cart=self.obj.cart)
-            if CartProduct.objects.get(product=self.product, cart=self.obj.cart):
-                self.update = CartProduct.objects.update(product=self.product, cart=self.obj.cart,
-                                                         quantity=self.cartprod.quantity - 1)
-                return redirect("/cart")
+            cart_product = CartProduct.objects.get(product=product, cart=user.cart)
+            cart_product.quantity -= 1
+            cart_product.save()
+            return redirect("/cart")
         except Exception:
-            self.dele = CartProduct.objects.get(product=self.product, cart=self.obj.cart).delete()
+            cart_product = CartProduct.objects.get(product=product, cart=user.cart)
+            cart_product.delete()
             return redirect("/cart")
 
 
@@ -200,6 +199,6 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
     model = User
     form_class = PasswordChangeForm
     template_name = "form.html"
-    success_url = "/"
+    success_url = "/profil_details/"
 
 

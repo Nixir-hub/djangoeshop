@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from django.urls import reverse
+from sorl.thumbnail import ImageField, get_thumbnail
 
 
 class Profile(models.Model):
@@ -35,14 +36,14 @@ class Product(models.Model):
     SKU = models.IntegerField(unique=True)
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
-    img = models.ImageField(upload_to='photos', null=True)
+    img = ImageField(upload_to='photos', null=True)
 
     def __str__(self):
         return self.name
 
     def get_brutto_price(self):
         brutto = self.price_netto + float(self.get_vat_display()) * self.price_netto
-        return brutto
+        return round(brutto, 2)
 
     def get_procent_vat(self):
         vat = str(float(self.get_vat_display()) * 100) + "%"
@@ -60,11 +61,16 @@ class Product(models.Model):
     def get_edit_url(self):
         return reverse("edit-product", args=(self.pk,))
 
+    def save(self, *args, **kwargs):
+        if self.img:
+            self.image = get_thumbnail(self.img, '500x600', quality=99, format='JPEG')
+        super(Product, self).save(*args, **kwargs)
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
     products = models.ManyToManyField(Product)
-    img = models.ImageField(upload_to='photos', null=True)
+    img = ImageField(upload_to='photos', null=True)
 
     def __str__(self):
         return self.name
@@ -77,6 +83,11 @@ class Category(models.Model):
 
     def get_edit_url(self):
         return reverse('edit-category', args=(self.pk,))
+
+    def save(self, *args, **kwargs):
+        if self.img:
+            self.image = get_thumbnail(self.img, '500x600', quality=99, format='JPEG')
+        super(Category, self).save(*args, **kwargs)
 
 
 class Discount(models.Model):

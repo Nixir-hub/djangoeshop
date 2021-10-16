@@ -10,9 +10,9 @@
             <a href="{% url "product-detail" item.product.id %}">{{ item }}</a>
                 Cena za 1szt: {{ item.product.get_brutto_price }} zł
                 Ilość:
-                <a href="{{ item.remove_quantity }}">-</a>
+                <a class="btn btn-warning" href="{{ item.remove_quantity }}">-</a>
                 {{ item.quantity }}
-                <a href="{{ item.add_quantity }}">+</a>
+                <a class="btn btn-warning" href="{{ item.add_quantity }}">+</a>
                 {% if user.is_authenticated%}
                    <a class="btn btn-danger" href="{{ item.get_delete_url }}"> Usuń</a>
                {% endif %}

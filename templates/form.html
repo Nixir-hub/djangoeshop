@@ -4,7 +4,7 @@
             <div class="card" style="width: 18rem;">
                 <div class="card-body center">
                     <h5 class="card-title">{{ title }}</h5>
-                    <form id="form" method="POST">
+                    <form id="form" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_table }}
                     </form>
