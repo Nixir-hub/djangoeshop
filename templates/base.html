@@ -9,27 +9,50 @@
     <title>Sklep internetowy</title>
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
         {% if not user.is_authenticated %}
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
             <a class="navbar-brand" href="/">Strona Główna</a>
-            <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
-            <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
-            <a class="navbar-brand" style="color: #005cea" href="{% url 'login' %}">Zaloguj</a>
-            <a class="navbar-brand" style="color: #001eb2" href="{% url "register-view" %}"> Rejestracja</a>
-            <form action="{% url 'search_results' %}" method="get">
-                <input name="q" type="text" placeholder="Search...">
-                <button type="submit">Szukaj!</button>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "list_products" %}"> Produkty</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'categories-list-view' %}"> Kategorie</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" action="{% url 'search_results' %}" method="get">
+                <input class="form-control mr-sm-2" name="q" type="text" placeholder="Search...">
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Szukaj!</button>
             </form>
+            <a class="nav-link" style="color: wheat" href="{% url 'login' %}">Zaloguj</a>
+            <a class="nav-link" style="color: wheat" href="{% url "register-view" %}"> Rejestracja</a>
         {% elif user.is_authenticated %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
             <a class="navbar-brand" href="/">Strona Główna</a>
-            <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
-            <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
-            <a class="navbar-brand" href="{% url "cart-view"%}">Koszyk</a>
-            <a class="navbar-brand" style="color: #b00bff" href="{% url "profil-view" %}">Profil</a>
-            <a class="navbar-brand" style="color: red" href="{% url 'logout' %}">Wyloguj</a>
-            <form action="{% url 'search_results' %}" method="get">
-                <input name="q" type="text" placeholder="Search...">
-                <button type="submit">Szukaj!</button>
-            </form>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "list_products" %}"> Produkty</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'categories-list-view' %}"> Kategorie</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "cart-view"%}">Koszyk</a>
+                </li>
+            </ul>
+                <form class="form-inline my-2 my-lg-0" action="{% url 'search_results' %}" method="get">
+                    <input class="form-control mr-sm-2" name="q" type="text" placeholder="Szukaj...">
+                    <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Szukaj!</button>
+                </form>
+                <a class="nav-link" style="color: goldenrod" href="{% url "profil-view" %}">Profil</a>
+                <a class="nav-link" style="color: red" href="{% url 'logout' %}">Wyloguj</a>
         {% endif %}
+        </div>
     </nav>
 </head>
 <body id="bg" style="background-image: url('{% static "new foto.jpeg"%}')">
