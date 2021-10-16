@@ -51,14 +51,18 @@ class AddProductView(PermissionRequiredMixin, CreateView):
     success_url = "/products"
 
 
-class EditProductView(UpdateView):
+class EditProductView(PermissionRequiredMixin, UpdateView):
+    permission_required = "eshopp_app.change_product"
+    permission_denied_message = "Nie masz uprawnień"
     model = Product
     form_class = AddProductForm
     template_name = "form.html"
     success_url = "/products"
 
 
-class DeleteProductView( DeleteView):
+class DeleteProductView(PermissionRequiredMixin, DeleteView):
+    permission_required = "eshopp_app.delete_product"
+    permission_denied_message = "Nie masz uprawnień"
     model = Product
     template_name = "del_form.html"
     success_url = "/products"
@@ -74,14 +78,18 @@ class CategoryDetailsView(DetailView):
     template_name = "category_detail.html"
 
 
-class AddCategoryView(CreateView):
+class AddCategoryView(PermissionRequiredMixin, CreateView):
+    permission_required = "eshopp_app.add_category"
+    permission_denied_message = "Nie masz uprawnień"
     model = Category
     form_class = AddCategoryForm
     template_name = "form.html"
     success_url = "/categories"
 
 
-class EditCategoryView(UpdateView):
+class EditCategoryView(PermissionRequiredMixin, UpdateView):
+    permission_required = "eshopp_app.change_category"
+    permission_denied_message = "Nie masz uprawnień"
     model = Category
     form_class = AddCategoryForm
     template_name = "form.html"
@@ -89,6 +97,8 @@ class EditCategoryView(UpdateView):
 
 
 class DeleteCategoryView(PermissionRequiredMixin, DeleteView):
+    permission_required = "eshopp_app.delete_category"
+    permission_denied_message = "Nie masz uprawnień"
     model = Category
     template_name = "del_form.html"
     success_url = "/categories"
