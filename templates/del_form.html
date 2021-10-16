@@ -12,14 +12,17 @@
 {#                <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>#}
 {#            </div>#}
 {#        </div>#}
-        <div class="card text-center">
-            <div class="card-header">
-                Usunięcie konta!
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ user.username }}</h5>
-                <p class="card-text">Czy na pewno chcesz usunąć konto?</p>
-                <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>
-            </div>
+<form id="form" method="POST">
+    {% csrf_token %}
+    <div class="card text-center">
+        <div class="card-header">
+            Usunięcie konta!
         </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ user.username }}</h5>
+            <p class="card-text">Czy na pewno chcesz usunąć konto?</p>
+            <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>
+        </div>
+    </div>
+</form>
 {% endblock %}

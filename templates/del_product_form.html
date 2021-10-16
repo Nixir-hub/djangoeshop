@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form id="form" method="POST">
+        {% csrf_token %}
+       <div class="card text-center">
+            <div class="card-header">
+                Usunięcie produktu!
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">Czy na pewno chcesz usunąć kategorie {{ product.name }}?</p>
+                <button type="submit" class="btn btn-danger btn-block">Usuń!</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

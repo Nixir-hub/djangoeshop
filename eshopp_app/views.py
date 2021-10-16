@@ -35,6 +35,8 @@ class SearchResultsView(ListView):
 class ProductsListView(ListView):
     model = Product
     template_name = "product_list.html"
+    paginate_by = 25
+    queryset = Product.objects.filter().order_by('-name')
 
 
 class ProductDetailsView(DetailView):
@@ -64,18 +66,22 @@ class DeleteProductView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_product"
     permission_denied_message = "Nie masz uprawnień"
     model = Product
-    template_name = "del_form.html"
+    template_name = "del_product_form.html"
     success_url = "/products"
 
 
 class CategoriesListView(ListView):
     model = Category
     template_name = "category_list.html"
+    paginate_by = 4
+    queryset = Category.objects.filter().order_by('-name')
 
 
 class CategoryDetailsView(DetailView):
     model = Category
     template_name = "category_detail.html"
+    paginate_by = 25
+    queryset = Category.objects.filter().order_by('-name')
 
 
 class AddCategoryView(PermissionRequiredMixin, CreateView):
@@ -100,7 +106,7 @@ class DeleteCategoryView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_category"
     permission_denied_message = "Nie masz uprawnień"
     model = Category
-    template_name = "del_form.html"
+    template_name = "del_category_form.html"
     success_url = "/categories"
 
 
@@ -239,7 +245,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                     order=(Order.objects.last().order+1),
                     delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
                     user=object,
-                    price=object.cart.get_summary_brutto_after_discount(),
+                    price=object.cart.get_summary_brutto(),
                     is_payed=True
                      )
             order.save()
@@ -250,7 +256,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                                          delivery_method=Delivery.objects.get(
                                              id=request.POST.get("delivery_method")),
                                          user=object,
-                                         price=object.cart.get_summary_brutto_after_discount(),
+                                         price=object.cart.get_summary_brutto(),
                                          )
             order.save()
             return redirect("/profil_details/")

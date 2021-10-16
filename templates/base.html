@@ -106,6 +106,25 @@
     </div>
     {% endif %}
 {% endblock %}
+{% if page_obj.paginator %}
+<div class="card text-center">
+    <div >
+        {% if page_obj.has_previous %}
+            <a class="text-dark" href="?page={{ page_obj.previous_page_number }}">< poprzednia</a>
+        {% endif %}
+        {% for n in page_obj.paginator.page_range %}
+            {% if page_obj.number == n %}
+                <a class="text-dark" >{{ n }}</a>
+            {% elif n > page_obj.number|add:'-4' and n < page_obj.number|add:'4' %}
+                <a class="text-secondary" href="?page={{ n }}">| {{ n }} |</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a class="text-dark" href="?page={{ page_obj.next_page_number }}">następna ></a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
