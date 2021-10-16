@@ -21,10 +21,12 @@ from django.urls import path, include
 from eshopp_app.views import MainMenuView, ProductsListView, CategoriesListView, CategoryDetailsView, \
     ProductDetailsView, CartDetailsView, CreateUser, CartProductCreateView, DelCartProductView, \
     UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView, RemoveCartProductView, \
-    AddProductView, EditProductView, DeleteProductView, AddCategoryView, EditCategoryView, DeleteCategoryView
+    AddProductView, EditProductView, DeleteProductView, AddCategoryView, EditCategoryView, DeleteCategoryView, \
+    SearchResultsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('search/', SearchResultsView.as_view(), name='search_results'),
     path('', MainMenuView.as_view(), name="main-menu"),
     path('', include('django.contrib.auth.urls')),
     path('products/', ProductsListView.as_view(),  name="list_products"),

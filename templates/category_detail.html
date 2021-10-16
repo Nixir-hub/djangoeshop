@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-        <table>
             <div class="jumbotron jumbotron-fluid">
                 <div class="container">
                     <h1 class="display-6">{{ category.name }}</h1>
                     <a href="{{ category.get_edit_url }}" class="btn btn-secondary">Dodaj Produkty</a>
                 </div>
             </div>
+        <ul class="container">
             {%for item in category.products.all %}
-                <td>
+                <li class="list-group-item">
                 <div class="card text-center" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
                     <div class="card-body">
@@ -20,7 +20,7 @@
                         <a href="{{ item.add_to_cart }}" class="btn btn-secondary">Dodaj do koszyka</a>
                     </div>
                 </div>
-                </td>
+                </li>
             {% endfor %}
-        </table>
+        </ul>
 {% endblock %}

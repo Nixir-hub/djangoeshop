@@ -14,6 +14,10 @@
             <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
             <a class="navbar-brand" style="color: #005cea" href="{% url 'login' %}">Zaloguj</a>
             <a class="navbar-brand" style="color: #001eb2" href="{% url "register-view" %}"> Rejestracja</a>
+            <form action="{% url 'search_results' %}" method="get">
+                <input name="q" type="text" placeholder="Search...">
+                <button type="submit">Szukaj!</button>
+            </form>
         {% elif user.is_authenticated %}
             <a class="navbar-brand" href="/">Strona Główna</a>
             <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
@@ -21,6 +25,10 @@
             <a class="navbar-brand" href="{% url "cart-view"%}">Koszyk</a>
             <a class="navbar-brand" style="color: #b00bff" href="{% url "profil-view" %}">Profil</a>
             <a class="navbar-brand" style="color: red" href="{% url 'logout' %}">Wyloguj</a>
+            <form action="{% url 'search_results' %}" method="get">
+                <input name="q" type="text" placeholder="Search...">
+                <button type="submit">Szukaj!</button>
+            </form>
         {% endif %}
     </nav>
 </head>

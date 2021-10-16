@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-        <div class="container">
-            <div class="card" style="width: 18rem;">
-                <div class="card-body center">
-                    <h5 class="card-title">Czy na pewno chcesz swój profil {{ user.username }}?</h5>
-                    <form id="form" method="POST">
-                            {% csrf_token %}
-                            {{ form.as_table }}
-                    </form>
-                </div>
-            <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>
+{#        <div class="container">#}
+{#            <div class="card" style="width: 18rem;">#}
+{#                <div class="card-body center">#}
+{#                    <h5 class="card-title">Czy na pewno chcesz swój profil {{ user.username }}?</h5>#}
+{#                    <form id="form" method="POST">#}
+{#                            {% csrf_token %}#}
+{#                            {{ form.as_table }}#}
+{#                    </form>#}
+{#                </div>#}
+{#                <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="card text-center">
+            <div class="card-header">
+                Usunięcie konta!
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ user.username }}</h5>
+                <p class="card-text">Czy na pewno chcesz usunąć konto?</p>
+                <button form="form" type="submit" class="btn btn-danger btn-block">Usuń!</button>
             </div>
         </div>
 {% endblock %}

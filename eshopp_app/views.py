@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
@@ -10,6 +11,18 @@ from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Disco
 class MainMenuView(View):
     def get(self, request):
         return render(request, "base.html")
+
+
+class SearchResultsView(ListView):
+    model = Product
+    template_name = 'search_results.html'
+
+    def get_queryset(self):  # new
+        query = self.request.GET.get('q')
+        object_list = Product.objects.filter(
+            Q(name__icontains=query) | Q(category__name__icontains=query)
+        )
+        return object_list
 
 
 class ProductsListView(ListView):
@@ -174,12 +187,38 @@ class CreateOrderView(LoginRequiredMixin, View):
         object = self.request.user
         form = CreateOrderForm(request.POST)
         if form.is_valid():
-            if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+            if object.cart.discount.is_active:
+                if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+                    order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                            order=(Order.objects.last().order+1),
+                            delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                            user=object,
+                            price=object.cart.get_summary_brutto_after_discount(),
+                            is_payed=True
+                             )
+                    order.save()
+                    discount = object.cart.discount
+                    discount.is_active = False
+                    discount.save()
+                    return redirect("/profil_details/")
+                else:
+                    order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                                                 order=(Order.objects.last().order + 1),
+                                                 delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                                 user=object,
+                                                 price=object.cart.get_summary_brutto_after_discount(),
+                                                 )
+                    order.save()
+                    discount = object.cart.discount
+                    discount.is_active = False
+                    discount.save()
+                    return redirect("/profil_details/")
+            elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                         order=(Order.objects.last().order+1),
                         delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
                         user=object,
-                        price=object.cart.get_summary_brutto(),
+                        price=object.cart.get_summary_brutto_after_discount(),
                         is_payed=True
                          )
                 order.save()
@@ -187,9 +226,10 @@ class CreateOrderView(LoginRequiredMixin, View):
             else:
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                              order=(Order.objects.last().order + 1),
-                                             delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                             delivery_method=Delivery.objects.get(
+                                                 id=request.POST.get("delivery_method")),
                                              user=object,
-                                             price=object.cart.get_summary_brutto(),
+                                             price=object.cart.get_summary_brutto_after_discount(),
                                              )
                 order.save()
                 return redirect("/profil_details/")
