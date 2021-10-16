@@ -18,9 +18,11 @@
                         {% if item.price_netto %}
                         <p class="card-text">Cena: {{ item.get_brutto_price }} zł </p>
                         {% endif %}
-                        <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
-                        <a href="{{ item.add_to_cart }}" class="btn btn-secondary">Dodaj do koszyka</a>
                     </div>
+                </div>
+                <div class="container">
+                    <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
+                    <a href="{{ item.add_to_cart }}" class="btn btn-secondary">Dodaj do koszyka</a>
                 </div>
                 </li>
             {% endfor %}
