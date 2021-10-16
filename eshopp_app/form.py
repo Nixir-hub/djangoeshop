@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
-from eshopp_app.models import CartProduct, Order
+from eshopp_app.models import Order, Product, Category
 
 
 class LoginForm(forms.Form):
@@ -21,12 +21,9 @@ class PasswordChangeForm(SetPasswordForm):
         model = User
         form = "password_change_form.html"
         fields = ('old_password', 'new_password1', 'new_password2')
-
-
-class UpdateCartForm(forms.ModelForm):
-    class Meta:
-        model = CartProduct
-        fields = "__all__"
+        labels = {
+            ""
+        }
 
 
 class EditProfilForm(forms.ModelForm):
@@ -38,4 +35,16 @@ class EditProfilForm(forms.ModelForm):
 class CreateOrderForm(forms.ModelForm):
     class Meta:
         model = Order
+        fields = ("payment", "delivery_method")
+
+
+class AddProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        exclude = ("expire_date",)
+
+
+class AddCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
         fields = "__all__"

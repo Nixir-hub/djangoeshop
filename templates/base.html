@@ -12,17 +12,15 @@
             <a class="navbar-brand" href="/">Strona Główna</a>
             <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
             <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
-            <a class="navbar-brand" href="{% url 'login' %}">Zaloguj</a>
-            <a class="navbar-brand" href="{% url "register-view" %}"> Rejestracja</a>
-        {% else %}
-                <a class="navbar-brand" href="{% url 'logout' %}">Wyloguj</a>
-        {% endif %}
-
-        {% if user.is_authenticated %}
+            <a class="navbar-brand" style="color: #005cea" href="{% url 'login' %}">Zaloguj</a>
+            <a class="navbar-brand" style="color: #001eb2" href="{% url "register-view" %}"> Rejestracja</a>
+        {% elif user.is_authenticated %}
+            <a class="navbar-brand" href="/">Strona Główna</a>
             <a class="navbar-brand" href="{% url "list_products" %}"> Produkty</a>
             <a class="navbar-brand" href="{% url 'categories-list-view' %}"> Kategorie</a>
             <a class="navbar-brand" href="{% url "cart-view"%}">Koszyk</a>
-            <a class="navbar-brand" href="{% url "profil-view" %}">Profil</a>
+            <a class="navbar-brand" style="color: #b00bff" href="{% url "profil-view" %}">Profil</a>
+            <a class="navbar-brand" style="color: red" href="{% url 'logout' %}">Wyloguj</a>
         {% endif %}
     </nav>
 </head>

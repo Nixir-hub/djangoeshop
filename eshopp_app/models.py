@@ -1,8 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import User, AbstractUser
 from django.db import models
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.urls import reverse
 
 
@@ -37,7 +35,7 @@ class Product(models.Model):
     SKU = models.IntegerField(unique=True)
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
-    img = models.ImageField(upload_to='photos')
+    img = models.ImageField(upload_to='photos', null=True)
 
     def __str__(self):
         return self.name
@@ -56,6 +54,12 @@ class Product(models.Model):
     def add_to_cart(self):
         return reverse('add_to_cart', args=(self.pk,))
 
+    def get_delete_url(self):
+        return reverse("delete-product", args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse("edit-product", args=(self.pk,))
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
@@ -68,11 +72,11 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('category-details', args=(self.pk,))
 
-    # def get_delete_url(self):
-    #     return reverse('delete-category', args=(self.pk,))
-    #
-    # def get_edit_url(self):
-    #     return reverse('edit-category', args=(self.pk,))
+    def get_delete_url(self):
+        return reverse('delete-category', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-category', args=(self.pk,))
 
 
 class Discount(models.Model):
@@ -152,6 +156,7 @@ class CartProduct(models.Model):
 
     def remove_quantity(self):
         return reverse("edit-cart-product", args=(self.product.pk,))
+
 
 class Delivery(models.Model):
     name = models.CharField(max_length=64)

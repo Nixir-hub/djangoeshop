@@ -10,14 +10,36 @@
         {% endfor %}
     <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h1 class="card-header">Razem:</h1>
-                    <p class="card-text">Razem netto: {{ cart_id.get_summary_netto }} zł</p>
-                    <p class="card-text">VAT : {{ cart_id.get_summary_vat }} zł</p>
-                    <p class="card-text font-weight-bold">Razem brutto: {{ cart_id.get_summary_brutto }} zł</p>
-                    {% if cart_id.discount.is_active %}
-                    <p class="card-text">Kod rabatowy: {{ cart_id.discount }}</p>
-                    <p class="card-text font-weight-bold">Cena po rabacie: {{ cart_id.get_summary_brutto_after_discount }} zł</p>
-                     {% endif %}
+                <h1 class="card-header">Informacje</h1>
+                    <p class="card-text">Razem: {{ order.price }} zł</p>
+                    <p class="card-text">Opłacono:
+                        {% if order.is_payed %}
+                            <td class="col-2" style="color:green;">&#9745;</td>
+                        {% else %}
+                            <td class="col-2" style="color:red;">&#9746;</td>
+                        {% endif %}
+                    </p>
+                    <p class="card-text">W przygotowaniu:
+                        {% if order.in_completing %}
+                            <td class="col-2" style="color:green;">&#9745;</td>
+                        {% else %}
+                            <td class="col-2" style="color:red;">&#9746;</td>
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Wysłano:
+                        {% if order.is_send %}
+                            <td class="col-2" style="color:green;">&#9745;</td>
+                        {% else %}
+                            <td class="col-2" style="color:red;">&#9746;</td>
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Odebrano:
+                        {% if order.in_delivery_done %}
+                            <td class="col-2" style="color:green;">&#9745;</td>
+                        {% else %}
+                            <td class="col-2" style="color:red;">&#9746;</td>
+                        {% endif %}
+                    </p>
             </div>
     </div>
     </ul>

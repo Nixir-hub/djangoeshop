@@ -20,7 +20,8 @@ from django.urls import path, include
 
 from eshopp_app.views import MainMenuView, ProductsListView, CategoriesListView, CategoryDetailsView, \
     ProductDetailsView, CartDetailsView, CreateUser, CartProductCreateView, DelCartProductView, \
-    UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView, RemoveCartProductView
+    UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView, RemoveCartProductView, \
+    AddProductView, EditProductView, DeleteProductView, AddCategoryView, EditCategoryView, DeleteCategoryView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,7 +40,13 @@ urlpatterns = [
     path("del_profil/<int:pk>/", DeleteUserView.as_view(), name="delete-user"),
     path("edit_profil/<int:pk>/", EditUserProfil.as_view(), name="edit-user"),
     path("create_order/", CreateOrderView.as_view(), name="create-order"),
-    path("order_detail/<int:pk>/", OrderDetailView.as_view(), name="order-detail")
+    path("order_detail/<int:pk>/", OrderDetailView.as_view(), name="order-detail"),
+    path("add_product/", AddProductView.as_view(), name="add-product"),
+    path("edit_product/<int:pk>/", EditProductView.as_view(), name="edit-product"),
+    path("delete_product/<int:pk>/", DeleteProductView.as_view(), name="delete-product"),
+    path("add_category/", AddCategoryView.as_view(), name="add-category"),
+    path("edit_category/<int:pk>/", EditCategoryView.as_view(), name="edit-category"),
+    path("delete_category/<int:pk>/", DeleteCategoryView.as_view(), name="delete-category")
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

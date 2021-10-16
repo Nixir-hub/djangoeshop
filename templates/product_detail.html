@@ -24,5 +24,7 @@
     </uL>
     {% if user.is_authenticated %}
         <li class="list-group-item"><a class="btn btn-primary" href="{{ product.add_to_cart }}"> Dodaj do koszyka</a></li>
+        <li class="list-group-item"><a class="btn btn-danger" href="{{ product.get_delete_url }}"> Usuń</a></li>
+        <li class="list-group-item"><a class="btn btn-secondary" href="{{ product.get_edit_url }}"> Edytuj</a></li>
     {% endif %}
 {% endblock %}
