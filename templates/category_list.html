@@ -5,7 +5,9 @@
         <div class="jumbotron jumbotron-fluid">
                 <div class="container">
                     <h1 class="display-6">Kategorie</h1>
+                    {% if perms.eshopp_app.add_category %}
                     <a href="/add_category/" class="btn btn-secondary">Dodaj Kategorie</a>
+                    {% endif %}
                 </div>
         </div>
         {%for item in object_list %}

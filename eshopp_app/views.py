@@ -10,14 +10,21 @@ from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Disco
 
 class MainMenuView(View):
     def get(self, request):
-        return render(request, "base.html")
+        products = Product.objects.all()
+        product1 = products[0]
+        product2 = products[1]
+        product3 = products[2]
+        return render(request, "base.html", {"product1": product1,
+                                             "product2": product2,
+                                             "product3": product3
+                                             })
 
 
 class SearchResultsView(ListView):
     model = Product
     template_name = 'search_results.html'
 
-    def get_queryset(self):  # new
+    def get_queryset(self):
         query = self.request.GET.get('q')
         object_list = Product.objects.filter(
             Q(name__icontains=query) | Q(category__name__icontains=query)
@@ -35,7 +42,9 @@ class ProductDetailsView(DetailView):
     template_name = "product_detail.html"
 
 
-class AddProductView(CreateView):
+class AddProductView(PermissionRequiredMixin, CreateView):
+    permission_required = "eshopp_app.add_product"
+    permission_denied_message = "Nie masz uprawnień"
     model = Product
     form_class = AddProductForm
     template_name = "form.html"
@@ -187,8 +196,36 @@ class CreateOrderView(LoginRequiredMixin, View):
         object = self.request.user
         form = CreateOrderForm(request.POST)
         if form.is_valid():
-            if object.cart.discount.is_active:
-                if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+            if len(object.cart.cartproduct_set.all()) == 0:
+                return redirect("/cart")
+            else:
+                if object.cart.discount.is_active:
+                    if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+                        order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                                order=(Order.objects.last().order+1),
+                                delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                user=object,
+                                price=object.cart.get_summary_brutto_after_discount(),
+                                is_payed=True
+                                 )
+                        order.save()
+                        discount = object.cart.discount
+                        discount.is_active = False
+                        discount.save()
+                        return redirect("/profil_details/")
+                    else:
+                        order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                                                     order=(Order.objects.last().order + 1),
+                                                     delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                                     user=object,
+                                                     price=object.cart.get_summary_brutto_after_discount(),
+                                                     )
+                        order.save()
+                        discount = object.cart.discount
+                        discount.is_active = False
+                        discount.save()
+                        return redirect("/profil_details/")
+                elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
                     order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                             order=(Order.objects.last().order+1),
                             delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
@@ -197,42 +234,17 @@ class CreateOrderView(LoginRequiredMixin, View):
                             is_payed=True
                              )
                     order.save()
-                    discount = object.cart.discount
-                    discount.is_active = False
-                    discount.save()
                     return redirect("/profil_details/")
                 else:
                     order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                                  order=(Order.objects.last().order + 1),
-                                                 delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                                 delivery_method=Delivery.objects.get(
+                                                     id=request.POST.get("delivery_method")),
                                                  user=object,
                                                  price=object.cart.get_summary_brutto_after_discount(),
                                                  )
                     order.save()
-                    discount = object.cart.discount
-                    discount.is_active = False
-                    discount.save()
                     return redirect("/profil_details/")
-            elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
-                order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
-                        order=(Order.objects.last().order+1),
-                        delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
-                        user=object,
-                        price=object.cart.get_summary_brutto_after_discount(),
-                        is_payed=True
-                         )
-                order.save()
-                return redirect("/profil_details/")
-            else:
-                order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
-                                             order=(Order.objects.last().order + 1),
-                                             delivery_method=Delivery.objects.get(
-                                                 id=request.POST.get("delivery_method")),
-                                             user=object,
-                                             price=object.cart.get_summary_brutto_after_discount(),
-                                             )
-                order.save()
-                return redirect("/profil_details/")
 
 
 class PasswordChangeView(LoginRequiredMixin, FormView):

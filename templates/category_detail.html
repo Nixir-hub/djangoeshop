@@ -3,7 +3,9 @@
             <div class="jumbotron jumbotron-fluid">
                 <div class="container">
                     <h1 class="display-6">{{ category.name }}</h1>
+                    {% if perms.eshopp_app.change_category %}
                     <a href="{{ category.get_edit_url }}" class="btn btn-secondary">Dodaj Produkty</a>
+                    {% endif %}
                 </div>
             </div>
         <ul class="container">
