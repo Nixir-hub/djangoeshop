@@ -23,7 +23,7 @@ class Profile(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.CharField(max_length=255)
     stock = models.PositiveIntegerField()
     price_netto = models.FloatField()
     VAT_VALUE = (

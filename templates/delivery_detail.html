@@ -4,8 +4,10 @@
         <div class="jumbotron">
             <h1>{{ delivery.name }}</h1>
             <p1>{{ delivery.get_delivery_method_display }}</p1>
-            <a class="btn btn-dark" href="{{ delivery.get_edit_url }}"> Edytuj dane</a>
-            <a class="btn btn-danger" href="{{ delivery.get_delete_url }}"> Usuń</a>
+            <div class="container">
+                <a class="btn btn-dark" href="{{ delivery.get_edit_url }}"> Edytuj dane</a>
+                <a class="btn btn-danger" href="{{ delivery.get_delete_url }}"> Usuń</a>
+            </div>
         </div>
     {% endif %}
 {% endblock %}

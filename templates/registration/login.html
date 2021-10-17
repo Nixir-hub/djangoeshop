@@ -1,5 +1,28 @@
-{% extends 'form.html' %}
-
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+    <div class="row justify-content-end">
+        <div class="card" style="width: auto;">
+            <div class="card-body center">
+                <h5 class="card-title"></h5>
+                <form id="form" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    <table>
+                        <tr>
+                            <td>Nazwa użytkownika:</td>
+                            <td><input name="username" type="text" placeholder="Nazwa użytkownika"></td>
+                        </tr>
+                        <tr>
+                            <td>Hasło:</td>
+                            <td><input name="password" type="password" placeholder="hasło"></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        <button form="form" type="submit" class="btn btn-primary btn-block">Zaloguj</button>
+        </div>
+    </div>
+{% endblock %}
 {#    <div class="select2-container">#}
 {#        <form id="form" method="POST">#}
 {#                {% csrf_token %}#}

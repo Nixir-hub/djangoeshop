@@ -1,12 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
+from django.contrib.auth.views import SuccessURLAllowedHostsMixin
+from django.views.generic import FormView
+
 from eshopp_app.models import Order, Product, Category, Delivery, Payment
-
-
-class LoginForm(forms.Form):
-    username = forms.CharField(label=("Nazwa użytkownika"))
-    password = forms.CharField(label=("Hasło"), widget=forms.PasswordInput)
 
 
 class SignUpForm(UserCreationForm):
