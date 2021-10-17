@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body center">
+                <h5 class="card-title"></h5>
+                <form id="form" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_table }}
+                </form>
+            </div>
+        <button form="form" type="submit" class="btn btn-primary btn-block">Zatwierdź!</button>
+        </div>
+    </div>
+{% endblock %}

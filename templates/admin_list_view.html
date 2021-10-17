@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-6">Zarządzanie Stroną</h1>
+                {% if perms.eshopp_app.add_product %}
+                <a href="/payment_list/" class="btn btn-secondary">Płatności</a>
+                <a href="/delivery_list/" class="btn btn-secondary">Dostawcy</a>
+                <a href="/" class="btn btn-secondary">Dodanie uprawnień</a>
+                {% endif %}
+            </div>
+        </div>
+{% endblock %}

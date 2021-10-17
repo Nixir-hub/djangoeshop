@@ -4,7 +4,8 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from eshopp_app.form import SignUpForm, CreateOrderForm, PasswordChangeForm, AddProductForm, AddCategoryForm
+from eshopp_app.form import SignUpForm, CreateOrderForm, PasswordChangeForm, AddProductForm, AddCategoryForm, \
+    AddDeliverForm, AddPaymentForm
 from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Discount, Profile, Payment, Delivery
 
 
@@ -269,3 +270,79 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
     success_url = "/profil_details/"
 
 
+class DeliveryListView(PermissionRequiredMixin, ListView):
+    permission_required = "eshopp_app.view_delivery"
+    model = Delivery
+    template_name = "product_list.html"
+    paginate_by = 25
+    queryset = Delivery.objects.filter().order_by('-name')
+
+
+class DeliveryDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "eshopp_app.view_delivery"
+    model = Delivery
+    template_name = "product_detail.html"
+
+
+class AddDeliveryView(PermissionRequiredMixin, CreateView):
+    permission_required = "eshopp_app.add_delivery"
+    model = Delivery
+    form_class = AddDeliverForm
+    template_name = "payment_form.html"
+    success_url = "/"
+
+
+class EditDeliveryView(PermissionRequiredMixin, UpdateView):
+    permission_required = "eshopp_app.change_delivery"
+    model = Delivery
+    form_class = AddDeliverForm
+    content_type = "/"
+
+
+class DeleteDeliveryView(PermissionRequiredMixin, DeleteView):
+    permission_required = "eshopp_app.delete_delivery"
+    model = Delivery
+    template_name = "del_form.html"
+    content_type = "/"
+
+
+class PaymentListView(PermissionRequiredMixin, ListView):
+    permission_required = "eshopp_app.view_payment"
+    model = Payment
+    template_name = "product_list.html"
+    paginate_by = 25
+    queryset = Payment.objects.filter().order_by('-name')
+
+
+class PaymentDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "eshopp_app.view_payment"
+    model = Payment
+    template_name = "product_detail.html"
+
+
+class AddPaymentView(PermissionRequiredMixin, CreateView):
+    permission_required = "eshopp_app.add_view"
+    model = Payment
+    form_class = AddPaymentForm
+    template_name = "payment_form.html"
+    success_url = "/"
+
+
+class EditPaymentView(PermissionRequiredMixin, UpdateView):
+    permission_required = "eshopp_app.change_payment"
+    model = Payment
+    form_class = AddPaymentForm
+    content_type = "/"
+
+
+class DeletePaymentView(PermissionRequiredMixin, DeleteView):
+    permission_required = "eshopp_app.delete_payment"
+    model = Payment
+    template_name = "del_form.html"
+    content_type = "/"
+
+
+class AdminView(PermissionRequiredMixin, View):
+    permission_required = "eshopp_app.view_payment"
+    def get(self, request):
+        return render(request, "admin_list_view.html")

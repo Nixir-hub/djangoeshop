@@ -44,6 +44,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url "cart-view"%}">Koszyk</a>
                 </li>
+                {% if perms.contenttypes %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "site-moderator" %}">Admin</a>
+                </li>
+                {% endif %}
             </ul>
                 <form class="form-inline my-2 my-lg-0" action="{% url 'search_results' %}" method="get">
                     <input class="form-control mr-sm-2" name="q" type="text" placeholder="Szukaj...">

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth.models import User
-from eshopp_app.models import Order, Product, Category
+from eshopp_app.models import Order, Product, Category, Delivery, Payment
 
 
 class LoginForm(forms.Form):
@@ -47,4 +47,16 @@ class AddProductForm(forms.ModelForm):
 class AddCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
+        fields = "__all__"
+
+
+class AddDeliverForm(forms.ModelForm):
+    class Meta:
+        model = Delivery
+        fields = "__all__"
+
+
+class AddPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
         fields = "__all__"
