@@ -7,6 +7,7 @@
                 {% if perms.eshopp_app.add_product %}
                 <a href="/payment_list/" class="btn btn-secondary">Płatności</a>
                 <a href="/delivery_list/" class="btn btn-secondary">Dostawcy</a>
+                {% elif perms.auth.change_group %}
                 <a href="/" class="btn btn-secondary">Dodanie uprawnień</a>
                 {% endif %}
             </div>

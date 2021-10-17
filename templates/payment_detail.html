@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <div class="jumbotron">
+            <h1>{{ payment.name }}</h1>
+            <p1>{{ payment.is_done }}</p1>
+            <a class="btn btn-dark" href="{{ payment.get_edit_url }}"> Edytuj dane</a>
+            <a class="btn btn-danger" href="{{ payment.get_delete_url }}"> Usuń</a>
+        </div>
+    {% endif %}
+{% endblock %}

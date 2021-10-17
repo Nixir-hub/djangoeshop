@@ -273,7 +273,7 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
 class DeliveryListView(PermissionRequiredMixin, ListView):
     permission_required = "eshopp_app.view_delivery"
     model = Delivery
-    template_name = "product_list.html"
+    template_name = "delivery_list.html"
     paginate_by = 25
     queryset = Delivery.objects.filter().order_by('-name')
 
@@ -281,35 +281,36 @@ class DeliveryListView(PermissionRequiredMixin, ListView):
 class DeliveryDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "eshopp_app.view_delivery"
     model = Delivery
-    template_name = "product_detail.html"
+    template_name = "delivery_detail.html"
 
 
 class AddDeliveryView(PermissionRequiredMixin, CreateView):
     permission_required = "eshopp_app.add_delivery"
     model = Delivery
     form_class = AddDeliverForm
-    template_name = "payment_form.html"
-    success_url = "/"
+    template_name = "form.html"
+    success_url = "/site_moderator/"
 
 
 class EditDeliveryView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_delivery"
     model = Delivery
-    form_class = AddDeliverForm
-    content_type = "/"
+    fields = "__all__"
+    template_name = "form.html"
+    success_url = "/site_moderator/"
 
 
 class DeleteDeliveryView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_delivery"
     model = Delivery
-    template_name = "del_form.html"
-    content_type = "/"
+    template_name = "del_delivery_form.html"
+    success_url = "/site_moderator/"
 
 
 class PaymentListView(PermissionRequiredMixin, ListView):
     permission_required = "eshopp_app.view_payment"
     model = Payment
-    template_name = "product_list.html"
+    template_name = "payment_list.html"
     paginate_by = 25
     queryset = Payment.objects.filter().order_by('-name')
 
@@ -317,29 +318,37 @@ class PaymentListView(PermissionRequiredMixin, ListView):
 class PaymentDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "eshopp_app.view_payment"
     model = Payment
-    template_name = "product_detail.html"
+    template_name = "payment_detail.html"
 
 
 class AddPaymentView(PermissionRequiredMixin, CreateView):
-    permission_required = "eshopp_app.add_view"
+    permission_required = "eshopp_app.add_payment"
     model = Payment
     form_class = AddPaymentForm
     template_name = "payment_form.html"
-    success_url = "/"
+    success_url = "/site_moderator/"
 
 
 class EditPaymentView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_payment"
     model = Payment
-    form_class = AddPaymentForm
-    content_type = "/"
+    fields = "__all__"
+    template_name = "form.html"
+    success_url = "/site_moderator/"
 
 
 class DeletePaymentView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_payment"
     model = Payment
-    template_name = "del_form.html"
-    content_type = "/"
+    template_name = "del_payment_form.html"
+    success_url = "/site_moderator/"
+
+
+class EditUserView(PermissionRequiredMixin, UpdateView):
+    model = User
+    fields = "__all__"
+    template_name = "form.html"
+    success_url = "/site_moderator/"
 
 
 class AdminView(PermissionRequiredMixin, View):

@@ -178,6 +178,15 @@ class Delivery(models.Model):
     )
     delivery_method = models.IntegerField(choices=DELIVERY_METHODS, default=1)
 
+    def get_absolute_url(self):
+        return reverse('delivery-detail', args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse('delete-delivery', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-delivery', args=(self.pk,))
+
     def __str__(self):
         return self.name
 
@@ -185,6 +194,15 @@ class Delivery(models.Model):
 class Payment(models.Model):
     name = models.CharField(max_length=64)
     is_done = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('payment-detail', args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse('delete-payment', args=(self.pk,))
+
+    def get_edit_url(self):
+        return reverse('edit-payment', args=(self.pk,))
 
     def __str__(self):
         return self.name

@@ -60,7 +60,7 @@ urlpatterns = [
     path("add_payment/", AddPaymentView.as_view(), name="add-payment"),
     path("edit_payment/<int:pk>/", EditPaymentView.as_view(), name="edit-payment"),
     path("delete_payment/<int:pk>/", DeletePaymentView.as_view(), name="delete-payment"),
-    path("site_moderator/", AdminView.as_view(), name="site-moderator")
+    path("site_moderator/", AdminView.as_view(), name="site-moderator"),
 ]
 if settings.DEBUG:
     urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
