@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse, reverse_lazy
 
-from eshopp_app.models import Category, Product, Profile, Order
+from eshopp_app.models import Category, Product, Profile, Order, Payment, Delivery
 
 
 def test_get_main_view():
@@ -159,7 +159,7 @@ def test_get_delete_product_login_normal(user_normal, product):
 def test_get_del_product_login_with_perm(user_with_permissions, category):
     client = Client()
     client.force_login(user_with_permissions)
-    response = client.get(reverse("edit-category", args=(category.pk,)))
+    response = client.get(reverse("delete-category", args=(category.pk,)))
     assert response.status_code == 200
 
 
@@ -528,3 +528,107 @@ def test_get_no_product_detail_view(user_with_permissions, delivery_method):
     assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_get_delivery_add_no_login():
+    client = Client()
+    response = client.get(reverse("add-delivery"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_add_delivery_login_normal(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("add-delivery"))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_add_delivery_login_with_permission(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("add-delivery"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_post_add_delivery(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    a ={
+        "name": "testdelivery",
+        "delivery_method": "1"
+    }
+    response = client.post(reverse("add-delivery"), data=a)
+    assert response.status_code == 302
+    assert Delivery.objects.get(**a).name == "testdelivery"
+
+
+@pytest.mark.django_db
+def test_get_delivery_edit_no_login(delivery_method):
+    client = Client()
+    response = client.get(reverse("edit-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_edit_delivery_login_normal(user_normal, delivery_method):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("edit-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_edit_delivery_login_with_permission(user_with_permissions, delivery_method):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("edit-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_edit_delivery_post(user_with_permissions, delivery_method):
+    client = Client()
+    client.force_login(user_with_permissions)
+    category = Category.objects.create(name="test")
+    category.save()
+    a ={
+        "name": "newdeliveryname",
+        "delivery_method": delivery_method.delivery_method
+
+    }
+    response = client.post(reverse("edit-delivery", args=(delivery_method.pk,)), data=a)
+    assert response.status_code == 302
+    assert Delivery.objects.get(id=delivery_method.pk).name == "newdeliveryname"
+
+
+@pytest.mark.django_db
+def test_get_delivery_delete_view_no_login(delivery_method):
+    client = Client()
+    response = client.get(reverse("delete-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_delivery_delete_view_login(user_normal, delivery_method):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("delete-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 403
+
+@pytest.mark.django_db
+def test_get_delivery_delete_view_login(user_with_permissions, delivery_method):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("delete-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 200
+
+@pytest.mark.django_db
+def test_del_delivery_post(user_with_permissions, delivery_method):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.post(reverse("delete-delivery", args=(delivery_method.pk,)))
+    assert response.status_code == 302
+    with pytest.raises(Delivery.DoesNotExist):
+        Delivery.objects.get(id=delivery_method.pk)

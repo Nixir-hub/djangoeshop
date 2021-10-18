@@ -336,7 +336,7 @@ class DeliveryDetailView(PermissionRequiredMixin, DetailView):
     model = Delivery
     template_name = "delivery_detail.html"
 
-
+# 3testy
 class AddDeliveryView(PermissionRequiredMixin, CreateView):
     permission_required = "eshopp_app.add_delivery"
     model = Delivery
@@ -345,6 +345,7 @@ class AddDeliveryView(PermissionRequiredMixin, CreateView):
     success_url = "/site_moderator/"
 
 
+# 4testy 3 get 1 post
 class EditDeliveryView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_delivery"
     model = Delivery
