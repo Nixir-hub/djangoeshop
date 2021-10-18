@@ -112,7 +112,7 @@ class DeleteCategoryView(PermissionRequiredMixin, DeleteView):
     success_url = "/categories"
 
 
-# 2 testy zrobione TODO:czy wiecej testów?
+# 2 testy zrobione
 class CartDetailsView(LoginRequiredMixin, DetailView):
     model = Cart
     template_name = "cart_detail.html"
@@ -121,8 +121,19 @@ class CartDetailsView(LoginRequiredMixin, DetailView):
         self.object = self.request.user.cart
         return self.object
 
+
 # TODO:wszystkie testy
-class CartProductCreateView(LoginRequiredMixin, View):
+class CartProductCreateView(UserPassesTestMixin, View):
+    def test_func(self):
+        pk = self.kwargs['pk']
+        try:
+            self.model.objects.get(cart=self.request.user.cart, pk=pk)
+            return True
+        except self.model.DoesNotExist:
+            return False
+    model = CartProduct
+    success_url = "/cart/"
+
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
@@ -135,8 +146,20 @@ class CartProductCreateView(LoginRequiredMixin, View):
             self.creation = CartProduct.objects.create(cart=user.cart, product=product, quantity=1)
             return redirect("/cart")
 
+
 # TODO:wszystkie testy
-class RemoveCartProductView(LoginRequiredMixin, View):
+class RemoveCartProductView(UserPassesTestMixin, View):
+    def test_func(self):
+        pk = self.kwargs['pk']
+        try:
+            self.model.objects.get(cart=self.request.user.cart, pk=pk)
+            return True
+        except self.model.DoesNotExist:
+            return False
+
+    model = CartProduct
+    success_url = "/cart/"
+
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
@@ -160,8 +183,7 @@ class DelCartProductView(UserPassesTestMixin, View):
             return True
         except self.model.DoesNotExist:
             return False
-    model= CartProduct
-    template_name = "del_prod_from_cart_form.html"
+    model = CartProduct
     success_url = "/cart/"
 
     def get(self, request, pk):
@@ -423,6 +445,7 @@ class EditUserPermissionView(PermissionRequiredMixin, UpdateView):
     success_url = "/site_moderator/"
 
 
+# 3 tests
 class AdminView(PermissionRequiredMixin, View):
     permission_required = "eshopp_app.view_payment"
     def get(self, request):
