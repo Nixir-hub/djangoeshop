@@ -23,7 +23,8 @@ from eshopp_app.views import MainMenuView, ProductsListView, CategoriesListView,
     UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView, RemoveCartProductView, \
     AddProductView, EditProductView, DeleteProductView, AddCategoryView, EditCategoryView, DeleteCategoryView, \
     SearchResultsView, AddDeliveryView, EditDeliveryView, DeleteDeliveryView, DeliveryListView, DeliveryDetailView, \
-    PaymentListView, PaymentDetailView, AddPaymentView, EditPaymentView, DeletePaymentView, AdminView, EditUserData
+    PaymentListView, PaymentDetailView, AddPaymentView, EditPaymentView, DeletePaymentView, AdminView, EditUserData, \
+    UserListView, EditUserPermissionView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -61,6 +62,8 @@ urlpatterns = [
     path("add_payment/", AddPaymentView.as_view(), name="add-payment"),
     path("edit_payment/<int:pk>/", EditPaymentView.as_view(), name="edit-payment"),
     path("delete_payment/<int:pk>/", DeletePaymentView.as_view(), name="delete-payment"),
+    path("user_list/", UserListView.as_view(), name="user-list"),
+    path("add_permission/<int:pk>", EditUserPermissionView.as_view(), name="add-permission"),
     path("site_moderator/", AdminView.as_view(), name="site-moderator"),
 ]
 if settings.DEBUG:

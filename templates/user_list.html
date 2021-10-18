@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-6">Użytkownicy</h1>
+            </div>
+        </div>
+    <ul class="container">
+        {%for item in object_list %}
+            <li class="list-group-item">
+            <div class="container row col-sm-6" >
+                 <div class="card text-center" style="width: 18rem;">
+                     <div class="card-body">
+                         <h5 class="card-title">{{ item.username }}</h5>
+                         <a href="/add_permission/{{ item.id }}" class="btn btn-secondary">Dodaj uprawnienia</a>
+                     </div>
+                </div>
+            </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

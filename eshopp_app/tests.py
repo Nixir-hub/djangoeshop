@@ -1,8 +1,5 @@
-import tempfile
-import faker
 import pytest
-from django.contrib.auth.models import User
-
+from django.contrib.auth.models import User, Group
 from django.test import TestCase, Client
 from django.urls import reverse, reverse_lazy
 
@@ -298,7 +295,6 @@ def test_get_del_category_login_with_perm(user_with_permissions, category):
 def test_del_category_post(user_with_permissions, category):
     client = Client()
     client.force_login(user_with_permissions)
-
     response = client.post(reverse("delete-category", args=(category.pk,)))
     assert response.status_code == 302
     with pytest.raises(Category.DoesNotExist):
@@ -470,7 +466,7 @@ def test_get_order_detail_view_login(user_normal, order):
 def test_get_order_detail_view_login_other_user(user_normal_2, order):
     client = Client()
     client.force_login(user_normal_2)
-    response = client.get(reverse("order-detail", args=(order.id,)))
+    response = client.get(reverse("order-detail", args=(order.pk,)))
     assert response.status_code == 403
 
 
@@ -496,24 +492,24 @@ def test_get_delivery_list_view_user_with_permission(user_with_permissions, deli
 
 
 @pytest.mark.django_db
-def test_product_list_get_empty(user_with_permissions):
+def test_delivery_list_get_empty(user_with_permissions):
     client = Client()
     client.force_login(user_with_permissions)
-    response = client.get(reverse("list_products"))
+    response = client.get(reverse("delivery-list"))
     assert response.status_code == 200
     products_list = response.context['object_list']
     assert products_list.count() == 0
 
 
 @pytest.mark.django_db
-def test_get_product_detail_view_no_login(delivery_method):
+def test_get_delivery_detail_view_no_login(delivery_method):
     client = Client()
     response = client.get(reverse("delivery-detail", args=(delivery_method.pk,)))
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
-def test_get_no_product_detail_view(user_normal, delivery_method):
+def test_get_no_delivery_detail_view(user_normal, delivery_method):
     client = Client()
     client.force_login(user_normal)
     response = client.get(reverse("delivery-detail", args=(delivery_method.pk,)))
@@ -521,7 +517,7 @@ def test_get_no_product_detail_view(user_normal, delivery_method):
 
 
 @pytest.mark.django_db
-def test_get_no_product_detail_view(user_with_permissions, delivery_method):
+def test_get_no_delivery_detail_view(user_with_permissions, delivery_method):
     client = Client()
     client.force_login(user_with_permissions)
     response = client.get(reverse("delivery-detail", args=(delivery_method.pk,)))
@@ -624,6 +620,7 @@ def test_get_delivery_delete_view_login(user_with_permissions, delivery_method):
     response = client.get(reverse("delete-delivery", args=(delivery_method.pk,)))
     assert response.status_code == 200
 
+
 @pytest.mark.django_db
 def test_del_delivery_post(user_with_permissions, delivery_method):
     client = Client()
@@ -632,3 +629,249 @@ def test_del_delivery_post(user_with_permissions, delivery_method):
     assert response.status_code == 302
     with pytest.raises(Delivery.DoesNotExist):
         Delivery.objects.get(id=delivery_method.pk)
+
+
+@pytest.mark.django_db
+def test_get_payment_list_view_no_permission(user_normal, payments):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("payment-list"))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_payment_list_view_user_with_permission(user_with_permissions, payments):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("payment-list"))
+    assert response.status_code == 200
+    payment_list = response.context['object_list']
+    assert payment_list.count() == len(payments)
+    for payment in payments:
+        assert payment in payments
+
+
+@pytest.mark.django_db
+def test_payment_list_get_empty(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("payment-list"))
+    assert response.status_code == 200
+    products_list = response.context['object_list']
+    assert products_list.count() == 0
+
+
+@pytest.mark.django_db
+def test_get_payment_detail_view_no_login(payment):
+    client = Client()
+    response = client.get(reverse("payment-detail", args=(payment.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_no_payment_detail_view(user_normal, payment):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("payment-detail", args=(payment.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_no_payment_detail_view(user_with_permissions, payment):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("payment-detail", args=(payment.pk,)))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_get_payment_add_no_login():
+    client = Client()
+    response = client.get(reverse("add-payment"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_add_payment_login_normal(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("add-payment"))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_add_payment_login_with_permission(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("add-payment"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_post_add_payment(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    a ={
+        "name": "testpayment",
+    }
+    response = client.post(reverse("add-payment"), data=a)
+    assert response.status_code == 302
+    assert Payment.objects.get(**a).name == "testpayment"
+
+
+@pytest.mark.django_db
+def test_get_payment_edit_no_login(payment):
+    client = Client()
+    response = client.get(reverse("edit-payment", args=(payment.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_edit_payment_login_normal(user_normal, payment):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("edit-payment", args=(payment.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_edit_payment_login_with_permission(user_with_permissions, payment):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("edit-payment", args=(payment.pk,)))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_edit_payment_post(user_with_permissions, payment):
+    client = Client()
+    client.force_login(user_with_permissions)
+    a ={
+        "name": "newpayment",
+        "id_done": payment.is_done
+
+    }
+    response = client.post(reverse("edit-payment", args=(payment.pk,)), data=a)
+    assert response.status_code == 302
+    assert Payment.objects.get(id=payment.pk).name == "newpayment"
+
+
+@pytest.mark.django_db
+def test_get_payment_delete_view_no_login(payment):
+    client = Client()
+    response = client.get(reverse("delete-payment", args=(payment.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_payment_delete_view_login(user_normal, payment):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("delete-payment", args=(payment.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_payment_delete_view_login(user_with_permissions, payment):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("delete-payment", args=(payment.pk,)))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_del_payment_post(user_with_permissions, payment):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.post(reverse("delete-payment", args=(payment.pk,)))
+    assert response.status_code == 302
+    with pytest.raises(Payment.DoesNotExist):
+        Payment.objects.get(id=payment.pk)
+
+
+@pytest.mark.django_db
+def test_get_user_list_view_no_permission(user_normal, users):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("user-list"))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_payment_list_view_user_with_permission(user_with_permissions, users):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("user-list"))
+    assert response.status_code == 200
+    payment_list = response.context['object_list']
+    assert payment_list.count()-1 == len(users)
+    for payment in users:
+        assert payment in users
+
+
+@pytest.mark.django_db
+def test_payment_list_get_empty(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("user-list"))
+    assert response.status_code == 200
+    products_list = response.context['object_list']
+    assert products_list.count() == 1
+
+
+@pytest.mark.django_db
+def test_get_user_edit_no_login(user_normal):
+    client = Client()
+    response = client.get(reverse("add-permission", args=(user_normal.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_edit_user_login_normal(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("add-permission", args=(user_normal.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_edit_user_login_with_permission(user_with_permissions, user_normal):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("add-permission", args=(user_normal.pk,)))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_edit_payment_post(user_with_permissions, user_normal):
+    client = Client()
+    client.force_login(user_with_permissions)
+    group = Group.objects.create(name="x")
+    a ={
+        "groups": group.id,
+    }
+    response = client.post(reverse("add-permission", args=(user_normal.pk,)), data=a)
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_admin_detail_view_no_login():
+    client = Client()
+    response = client.get(reverse("site-moderator"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_admin_detail_view_login_no_perm(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("site-moderator"))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_admin_detail_view(user_with_permissions):
+    client = Client()
+    client.force_login(user_with_permissions)
+    response = client.get(reverse("site-moderator"))
+    assert response.status_code == 200

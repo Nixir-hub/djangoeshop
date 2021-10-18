@@ -250,6 +250,7 @@ class OrderDetailView(UserPassesTestMixin, DetailView):
     model = Order
     template_name = "order_details.html"
 
+
 # TODO: Testy do zrobienia
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request):
@@ -336,6 +337,7 @@ class DeliveryDetailView(PermissionRequiredMixin, DetailView):
     model = Delivery
     template_name = "delivery_detail.html"
 
+
 # 3testy
 class AddDeliveryView(PermissionRequiredMixin, CreateView):
     permission_required = "eshopp_app.add_delivery"
@@ -354,6 +356,7 @@ class EditDeliveryView(PermissionRequiredMixin, UpdateView):
     success_url = "/site_moderator/"
 
 
+# 4 testy 3 get 1 post
 class DeleteDeliveryView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_delivery"
     model = Delivery
@@ -361,6 +364,7 @@ class DeleteDeliveryView(PermissionRequiredMixin, DeleteView):
     success_url = "/site_moderator/"
 
 
+# 3 testy get
 class PaymentListView(PermissionRequiredMixin, ListView):
     permission_required = "eshopp_app.view_payment"
     model = Payment
@@ -369,12 +373,14 @@ class PaymentListView(PermissionRequiredMixin, ListView):
     queryset = Payment.objects.filter().order_by('-name')
 
 
+# 3 testy get
 class PaymentDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "eshopp_app.view_payment"
     model = Payment
     template_name = "payment_detail.html"
 
 
+# 4 test 3 get 1 post
 class AddPaymentView(PermissionRequiredMixin, CreateView):
     permission_required = "eshopp_app.add_payment"
     model = Payment
@@ -383,6 +389,7 @@ class AddPaymentView(PermissionRequiredMixin, CreateView):
     success_url = "/site_moderator/"
 
 
+# 4 testy 3get 1post
 class EditPaymentView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_payment"
     model = Payment
@@ -391,6 +398,7 @@ class EditPaymentView(PermissionRequiredMixin, UpdateView):
     success_url = "/site_moderator/"
 
 
+# 4 testy 3 get 1 post
 class DeletePaymentView(PermissionRequiredMixin, DeleteView):
     permission_required = "eshopp_app.delete_payment"
     model = Payment
@@ -398,9 +406,19 @@ class DeletePaymentView(PermissionRequiredMixin, DeleteView):
     success_url = "/site_moderator/"
 
 
-class EditUserView(PermissionRequiredMixin, UpdateView):
+# 3 testy
+class UserListView(PermissionRequiredMixin, ListView):
+    permission_required = "eshopp_app.view_payment"
     model = User
-    fields = "__all__"
+    fields = "groups"
+    template_name = "user_list.html"
+
+
+# 3 testy 2 get 1 post
+class EditUserPermissionView(PermissionRequiredMixin, UpdateView):
+    permission_required = "eshopp_app.view_payment"
+    model = User
+    fields = ("groups",)
     template_name = "form.html"
     success_url = "/site_moderator/"
 
