@@ -26,6 +26,7 @@ class Product(models.Model):
     description = models.CharField(max_length=255)
     stock = models.PositiveIntegerField()
     price_netto = models.FloatField()
+    categories = models.ManyToManyField("Category")
     VAT_VALUE = (
         (1, "0.23"),
         (2, "0.08"),
@@ -33,10 +34,10 @@ class Product(models.Model):
         (4, "0")
     )
     vat = models.FloatField(choices=VAT_VALUE, default=4)
-    SKU = models.IntegerField(unique=True)
+    SKU = models.IntegerField(unique=True, null=True)
     in_stock = models.BooleanField(default=False)
     expire_date = models.DateField(null=True)
-    img = ImageField(upload_to='photos', null=True)
+    img = ImageField(upload_to='photos', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -69,8 +70,8 @@ class Product(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
-    products = models.ManyToManyField(Product)
-    img = ImageField(upload_to='photos', null=True)
+    # products = models.ManyToManyField(Product)
+    img = ImageField(upload_to='photos', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -157,7 +158,7 @@ class CartProduct(models.Model):
         return reverse('product-detail', args=(self.pk,))
 
     def get_delete_url(self):
-        return reverse('delete-cart-product', args=(self.pk,))
+        return reverse("delete-cart-product", args=(self.pk,))
 
     def get_edit_url(self):
         return reverse('edit-cart-product', args=(self.pk,))

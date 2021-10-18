@@ -17,8 +17,9 @@
                 {% endfor %}
                 </li>
             </ul>
-        <a class="btn btn-dark" href="{{ user.profile.get_edit_url }}"> Edytuj dane</a>
+        <a class="btn btn-dark" href="/edit_user/"> Edytuj Dane osobowe</a>
+        <a class="btn btn-dark" href="/edit_profil/"> Edytuj Adres i tel</a>
         <a class="btn btn-warning" href="/password_change/"> Zmień hasło</a>
-        <a class="btn btn-danger" href="/del_profil/{{ user.id }}/"> Usuń</a>
+        <a class="btn btn-danger" href="/del_profil/"> Usuń</a>
     {% endif %}
 {% endblock %}
