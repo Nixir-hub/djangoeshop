@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views import View
@@ -9,12 +8,14 @@ from eshopp_app.form import SignUpForm, CreateOrderForm, PasswordChangeForm, Add
     AddDeliverForm, AddPaymentForm
 from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Discount, Profile, Payment, Delivery
 
-#2 tests on
+
+# 2 tests on
 class MainMenuView(View):
     def get(self, request):
         return render(request, "base.html", )
 
-#TODO:DO ZROBIENIA
+
+#TODO: TESTY DO ZROBIENIA
 class SearchResultsView(ListView):
     model = Product
     template_name = 'search_results.html'
@@ -49,6 +50,7 @@ class AddProductView(PermissionRequiredMixin, CreateView):
     template_name = "form.html"
     success_url = "/products"
 
+
 # 3 Testy TODO:POST
 class EditProductView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_product"
@@ -57,6 +59,7 @@ class EditProductView(PermissionRequiredMixin, UpdateView):
     form_class = AddProductForm
     template_name = "form.html"
     success_url = "/products"
+
 
 # 4testy
 class DeleteProductView(PermissionRequiredMixin, DeleteView):
@@ -123,17 +126,7 @@ class CartDetailsView(LoginRequiredMixin, DetailView):
 
 
 # TODO:wszystkie testy
-class CartProductCreateView(UserPassesTestMixin, View):
-    def test_func(self):
-        pk = self.kwargs['pk']
-        try:
-            self.model.objects.get(cart=self.request.user.cart, pk=pk)
-            return True
-        except self.model.DoesNotExist:
-            return False
-    model = CartProduct
-    success_url = "/cart/"
-
+class CartProductCreateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
@@ -148,18 +141,7 @@ class CartProductCreateView(UserPassesTestMixin, View):
 
 
 # TODO:wszystkie testy
-class RemoveCartProductView(UserPassesTestMixin, View):
-    def test_func(self):
-        pk = self.kwargs['pk']
-        try:
-            self.model.objects.get(cart=self.request.user.cart, pk=pk)
-            return True
-        except self.model.DoesNotExist:
-            return False
-
-    model = CartProduct
-    success_url = "/cart/"
-
+class RemoveCartProductView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
@@ -224,7 +206,7 @@ class CreateUser(View):
         return render(request, 'form.html', {'form': form})
 
 
-#2 testy na get 1 test z postem
+# 2 testy na get 1 test z postem
 class DeleteUserView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = "del_form.html"
@@ -235,7 +217,7 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
         return self.object
 
 
-#3 testy 2get, 1 post
+# 3 testy 2get, 1 post
 class EditUserProfil(LoginRequiredMixin, UpdateView):
     model = Profile
     fields = ("adres", "phone")
@@ -247,7 +229,7 @@ class EditUserProfil(LoginRequiredMixin, UpdateView):
         return self.object
 
 
-#3 testy, 2get 1post
+# 3 testy 2 get 1 post
 class EditUserData(LoginRequiredMixin, UpdateView):
     model = User
     fields = ("first_name", "last_name")
@@ -299,6 +281,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                     discount = object.cart.discount
                     discount.is_active = False
                     discount.save()
+                    object.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
                 else:
                     order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
@@ -311,16 +294,18 @@ class CreateOrderView(LoginRequiredMixin, View):
                     discount = object.cart.discount
                     discount.is_active = False
                     discount.save()
+                    object.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
             elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
-                        order=(Order.objects.last().order+1),
-                        delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
-                        user=object,
-                        price=object.cart.get_summary_brutto(),
-                        is_payed=True
+                            order=(Order.objects.last().order+1),
+                            delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                            user=object,
+                            price=object.cart.get_summary_brutto(),
+                            is_payed=True
                          )
                 order.save()
+                object.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
             else:
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
@@ -331,6 +316,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                                              price=object.cart.get_summary_brutto(),
                                              )
                 order.save()
+                object.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
         else:
             return redirect("/cart/")
@@ -448,5 +434,6 @@ class EditUserPermissionView(PermissionRequiredMixin, UpdateView):
 # 3 tests
 class AdminView(PermissionRequiredMixin, View):
     permission_required = "eshopp_app.view_payment"
+
     def get(self, request):
         return render(request, "admin_list_view.html")
