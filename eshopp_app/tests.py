@@ -979,14 +979,26 @@ def test_get_add_delivery_login_normal(user_normal):
     assert response.status_code == 302
 
 
-# @pytest.mark.django_db
-# def test_post_add_delivery(user_with_permissions):
-#     client = Client()
-#     client.force_login(user_with_permissions)
-#     a ={
-#         "name": "testdelivery",
-#         "delivery_method": "1"
-#     }
-#     response = client.post(reverse("add-delivery"), data=a)
-#     assert response.status_code == 302
-#     assert Delivery.objects.get(**a).name == "testdelivery"
+@pytest.mark.django_db
+def test_get_register_user():
+    client = Client()
+    response = client.post(reverse("register-view"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_post_register_user():
+    client = Client()
+    a ={
+        "username": "testcreateuser11",
+            "first_name": "testname",
+            "last_name": "testsurname",
+            "email": "test@email.com",
+            "password1": "testpassword1",
+            "password2": "testpassword1"
+    }
+    response = client.post(reverse("register-view"), data=a)
+    assert response.status_code == 302
+    assert User.objects.get(username="testcreateuser11").profile
+    assert User.objects.get(username="testcreateuser11").cart
+    assert User.objects.get(username="testcreateuser11").discount_set.all()

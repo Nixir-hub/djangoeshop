@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views import View
@@ -33,7 +33,7 @@ class ProductsListView(ListView):
     model = Product
     template_name = "product_list.html"
     paginate_by = 25
-    queryset = Product.objects.filter().order_by('-name')
+    queryset = Product.objects.filter().order_by("-name").order_by("-in_stock")
 
 
 # 2 testy
@@ -82,8 +82,7 @@ class CategoriesListView(ListView):
 class CategoryDetailsView(DetailView):
     model = Category
     template_name = "category_detail.html"
-    paginate_by = 25
-    queryset = Category.objects.filter().order_by('-name')
+    queryset = Category.objects.all().filter().order_by('-name').order_by("-product__in_stock")
 
 
 # 2 testy na get 1 na post
@@ -188,8 +187,9 @@ class UserProfilView(LoginRequiredMixin, DetailView):
         return self.object
 
 
-# TODO:TESTY
+# test 1 get 1 post
 class CreateUser(View):
+
     def get(self, request):
         form = SignUpForm()
         return render(request, "registration/signup.html", {"form": form})
@@ -207,7 +207,7 @@ class CreateUser(View):
             discount.save()
             Cart.objects.create(user=User.objects.get(id=user.id), discount=Discount.objects.get(user=User.objects.get(id=user.id))).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
-            return redirect("/login")
+            return redirect("/logout")
         return render(request, 'form.html', {'form': form})
 
 
@@ -269,6 +269,7 @@ class CreateOrderView(LoginRequiredMixin, View):
         for cartproduct in object.cart.cartproduct_set.all():
             cart_product = object.cart.cartproduct_set.get(
                 product=Product.objects.get(id=cartproduct.product.id))
+            # TODO:wyświetlanie alertu
             if cartproduct.product.stock < cart_product.quantity:
                 return redirect("/cart/", context={"alert":"Nie ma tyle produktu na stanie"})
             else:

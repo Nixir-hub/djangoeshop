@@ -5,7 +5,6 @@
                     <h1 class="display-6">{{ category.name }}</h1>
                     {% if perms.eshopp_app.change_category and perms.eshopp_app.delete_category %}
                     <a href="{{ category.get_delete_url }}" class="btn btn-danger" > Usuń kategorie</a>
-                    <a href="{{ category.get_edit_url }}" class="btn btn-secondary"> Dodaj Produkty</a>
                     {% endif %}
                 </div>
             </div>

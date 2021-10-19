@@ -82,10 +82,10 @@ def user_with_permissions():
     return u
 
 
-# @pytest.fixture
-# def user_normal():
-#     u = User.objects.create(username="normal_guy")
-#     return u
+@pytest.fixture
+def user():
+    u = User.objects.create(username="normal_guy")
+    return u
 
 
 @pytest.fixture

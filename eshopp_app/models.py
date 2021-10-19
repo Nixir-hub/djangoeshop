@@ -50,6 +50,9 @@ class Product(models.Model):
         vat = str(float(self.get_vat_display()) * 100) + "%"
         return vat
 
+    def get_category_url(self):
+        return reverse('category-details', args=(self.categories.self.category.pk,))
+
     def get_absolute_url(self):
         return reverse('product-detail', args=(self.pk,))
 
@@ -70,7 +73,6 @@ class Product(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
-    # products = models.ManyToManyField(Product)
     img = ImageField(upload_to='photos', null=True, blank=True)
 
     def __str__(self):
