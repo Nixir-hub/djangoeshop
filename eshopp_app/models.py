@@ -151,6 +151,7 @@ class CartProduct(models.Model):
     class Meta:
            models.UniqueConstraint(fields=['product', 'cart'], name='unique_product_cart')
 
+
     def __str__(self):
         return f"{self.product}"
 

@@ -10,7 +10,7 @@
                 </div>
             </div>
         <ul class="container">
-            {%for item in category.products.all %}
+            {%for item in category.product_set.all %}
                 <li class="list-group-item">
                 <div class="card text-center" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
@@ -23,8 +23,10 @@
                 </div>
                 <div class="container">
                     <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
-                    {% if user.is_authenticated %}
-                    <a href="{{ item.add_to_cart }}" class="btn btn-secondary">Dodaj do koszyka</a>
+                    {% if user.is_authenticated and item.in_stock%}
+                    <a href="{{ item.add_to_cart }}" class="btn btn-success">Dodaj do koszyka</a>
+                    {% else %}
+                        <button class="btn btn-secondary disable">Produkt niedostępny</button>
                     {% endif %}
                 </div>
                 </li>

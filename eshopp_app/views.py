@@ -125,11 +125,12 @@ class CartDetailsView(LoginRequiredMixin, DetailView):
         return self.object
 
 
-# TODO:wszystkie testy
+# 2 testy get
 class CartProductCreateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
+
         try:
             cart_product = CartProduct.objects.get(product=product, cart=user.cart)
             cart_product.quantity +=1
@@ -140,7 +141,7 @@ class CartProductCreateView(LoginRequiredMixin, View):
             return redirect("/cart")
 
 
-# TODO:wszystkie testy
+# 3 testy get
 class RemoveCartProductView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
@@ -148,6 +149,9 @@ class RemoveCartProductView(LoginRequiredMixin, View):
         try:
             cart_product = CartProduct.objects.get(product=product, cart=user.cart)
             cart_product.quantity -= 1
+            if cart_product.quantity == 0:
+                cart_product.delete()
+                return redirect("/cart")
             cart_product.save()
             return redirect("/cart")
         except Exception:
@@ -156,7 +160,7 @@ class RemoveCartProductView(LoginRequiredMixin, View):
             return redirect("/cart")
 
 
-# TODO:DO POPRAWY TYLKO UŻYTKOWNIK MOŻĘ USÓWAĆ SWOJE
+# 2 testy get
 class DelCartProductView(UserPassesTestMixin, View):
     def test_func(self):
         pk = self.kwargs['pk']
@@ -184,6 +188,7 @@ class UserProfilView(LoginRequiredMixin, DetailView):
         return self.object
 
 
+# TODO:TESTY
 class CreateUser(View):
     def get(self, request):
         form = SignUpForm()
@@ -261,6 +266,14 @@ class CreateOrderView(LoginRequiredMixin, View):
         object = self.request.user
         if len(object.cart.cartproduct_set.all()) == 0:
             return redirect("/cart")
+        for cartproduct in object.cart.cartproduct_set.all():
+            cart_product = object.cart.cartproduct_set.get(
+                product=Product.objects.get(id=cartproduct.product.id))
+            if cartproduct.product.stock < cart_product.quantity:
+                return redirect("/cart/", context={"alert":"Nie ma tyle produktu na stanie"})
+            else:
+                form = CreateOrderForm()
+                return render(request, "form.html", {"form": form})
         form = CreateOrderForm()
         return render(request, "form.html", {"form": form})
 
@@ -281,6 +294,15 @@ class CreateOrderView(LoginRequiredMixin, View):
                     discount = object.cart.discount
                     discount.is_active = False
                     discount.save()
+                    for cartproduct in object.cart.cartproduct_set.all():
+                        cart_product = object.cart.cartproduct_set.get(
+                            product=Product.objects.get(id=cartproduct.product.id))
+                        if cartproduct.product.stock > 0:
+                            cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
+                            cartproduct.product.save()
+                            if cartproduct.product.stock == 0:
+                                cartproduct.product.in_stock = False
+                                cartproduct.product.save()
                     object.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
                 else:
@@ -294,6 +316,15 @@ class CreateOrderView(LoginRequiredMixin, View):
                     discount = object.cart.discount
                     discount.is_active = False
                     discount.save()
+                    for cartproduct in object.cart.cartproduct_set.all():
+                        cart_product = object.cart.cartproduct_set.get(
+                            product=Product.objects.get(id=cartproduct.product.id))
+                        if cartproduct.product.stock > 0:
+                            cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
+                            cartproduct.product.save()
+                            if cartproduct.product.stock == 0:
+                                cartproduct.product.in_stock = False
+                                cartproduct.product.save()
                     object.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
             elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
@@ -305,6 +336,15 @@ class CreateOrderView(LoginRequiredMixin, View):
                             is_payed=True
                          )
                 order.save()
+                for cartproduct in object.cart.cartproduct_set.all():
+                    cart_product = object.cart.cartproduct_set.get(
+                        product=Product.objects.get(id=cartproduct.product.id))
+                    if cartproduct.product.stock > 0:
+                        cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
+                        cartproduct.product.save()
+                        if cartproduct.product.stock == 0:
+                            cartproduct.product.in_stock = False
+                            cartproduct.product.save()
                 object.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
             else:
@@ -316,6 +356,15 @@ class CreateOrderView(LoginRequiredMixin, View):
                                              price=object.cart.get_summary_brutto(),
                                              )
                 order.save()
+                for cartproduct in object.cart.cartproduct_set.all():
+                    cart_product = object.cart.cartproduct_set.get(
+                        product=Product.objects.get(id=cartproduct.product.id))
+                    if cartproduct.product.stock > 0:
+                        cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
+                        cartproduct.product.save()
+                        if cartproduct.product.stock == 0:
+                            cartproduct.product.in_stock = False
+                            cartproduct.product.save()
                 object.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
         else:

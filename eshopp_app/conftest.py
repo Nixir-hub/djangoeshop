@@ -110,6 +110,13 @@ def cart_product(user_normal, product):
 
 
 @pytest.fixture
+def cart_product_quantity_2(user_normal, product):
+    cart_product = CartProduct.objects.create(cart=user_normal.cart, product=product, quantity=2)
+    cart_product.save()
+    return cart_product
+
+
+@pytest.fixture
 def product(category):
     product = Product.objects.create(name="x", description="x", stock=1, price_netto=1, vat=0.23, SKU=1, in_stock=True,
                                      img="photos/chair.jpeg")

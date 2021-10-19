@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, Group
 from django.test import TestCase, Client
 from django.urls import reverse, reverse_lazy
 
-from eshopp_app.models import Category, Product, Profile, Order, Payment, Delivery
+from eshopp_app.models import Category, Product, Profile, Order, Payment, Delivery, CartProduct
 
 
 def test_get_main_view():
@@ -852,6 +852,7 @@ def test_edit_payment_post(user_with_permissions, user_normal):
     }
     response = client.post(reverse("add-permission", args=(user_normal.pk,)), data=a)
     assert response.status_code == 302
+    assert user_normal.groups.all()[0].name == group.name
 
 
 @pytest.mark.django_db
@@ -875,3 +876,117 @@ def test_get_admin_detail_view(user_with_permissions):
     client.force_login(user_with_permissions)
     response = client.get(reverse("site-moderator"))
     assert response.status_code == 200
+
+
+# test custom view
+# TODO:DO poprawy
+# @pytest.mark.django_db
+# def test_get_payment_delete_view_no_login(cart_product):
+#     client = Client()
+#     response = client.get(reverse("delete-cart-product", args=(cart_product.pk,)))
+#     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_payment_delete_view_login_other_user(user_normal_2, cart_product):
+    client = Client()
+    client.force_login(user_normal_2)
+    response = client.get(reverse("delete-cart-product", args=(cart_product.pk,)))
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_cart_product_delete_view_login(user_normal, cart_product):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("delete-cart-product", args=(cart_product.pk,)))
+    assert response.status_code == 302
+    with pytest.raises(CartProduct.DoesNotExist):
+        user_normal.cart.cartproduct_set.get(id=cart_product.id)
+
+
+@pytest.mark.django_db
+def test_get_add_product_to_cart_delete_view_no_login(product):
+    client = Client()
+    response = client.get(reverse("add_to_cart", args=(product.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_add_product_to_cart_view_login(user_normal, cart_product, product):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("add_to_cart", args=(product.pk,)))
+    assert response.status_code == 302
+    assert user_normal.cart.cartproduct_set.get(product=product).quantity == 2
+
+
+@pytest.mark.django_db
+def test_get_remove_product_to_cart_delete_view_no_login(product):
+    client = Client()
+    response = client.get(reverse("edit-cart-product", args=(product.pk,)))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_remove_product_to_cart_view_login_cart_product_quantity_1(user_normal, cart_product_quantity_2, product):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("edit-cart-product", args=(product.pk,)))
+    assert response.status_code == 302
+    assert user_normal.cart.cartproduct_set.get(id=cart_product_quantity_2.id).quantity == 1
+
+
+@pytest.mark.django_db
+def test_get_remove_product_to_cart_view_login_cart_product_quantity_1(user_normal, cart_product, product):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("edit-cart-product", args=(product.pk,)))
+    assert response.status_code == 302
+    with pytest.raises(CartProduct.DoesNotExist):
+        user_normal.cart.cartproduct_set.get(id=cart_product.id)
+
+
+@pytest.mark.django_db
+def test_get_order_create_no_login():
+    client = Client()
+    response = client.get(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_create_order_with_cart_product_login_normal(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_create_order_with_cart_product_login_normal(user_normal_2):
+    client = Client()
+    client.force_login(user_normal_2)
+    response = client.get(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_add_delivery_login_normal(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+
+    response = client.get(reverse("create-order"))
+    assert response.status_code == 302
+
+
+# @pytest.mark.django_db
+# def test_post_add_delivery(user_with_permissions):
+#     client = Client()
+#     client.force_login(user_with_permissions)
+#     a ={
+#         "name": "testdelivery",
+#         "delivery_method": "1"
+#     }
+#     response = client.post(reverse("add-delivery"), data=a)
+#     assert response.status_code == 302
+#     assert Delivery.objects.get(**a).name == "testdelivery"

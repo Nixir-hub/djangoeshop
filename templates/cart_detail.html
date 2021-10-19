@@ -3,6 +3,11 @@
 {% block content %}
     <div class="jumbotron jumbotron-fluid">
         <h1 class="container">Koszyk</h1>
+        {% if alert %}
+        <div class="alert alert-warning">
+            <strong>Uwaga!</strong> Przepraszamy nie ma tyle produktu w magazynie
+        </div>
+        {% endif %}
     </div>
     <div class="container">
         <ol class="list-group">
