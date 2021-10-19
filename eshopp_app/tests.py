@@ -1002,3 +1002,73 @@ def test_post_register_user():
     assert User.objects.get(username="testcreateuser11").profile
     assert User.objects.get(username="testcreateuser11").cart
     assert User.objects.get(username="testcreateuser11").discount_set.all()
+
+
+@pytest.mark.django_db
+def test_get_crate_order_no_login_user():
+    client = Client()
+    response = client.post(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_crate_order_login_user_with_cart_product(product, cart_product, user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.post(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_get_crate_order_login_user_no_cart_product(user_normal_2):
+    client = Client()
+    client.force_login(user_normal_2)
+    response = client.post(reverse("create-order"))
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_post_crate_order_login_user_with_cart_product(cart_product, order, user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    assert len(user_normal.cart.cartproduct_set.all()) != 0
+    a = {
+        "payment": order.payment.id,
+        "delivery_method": order.delivery_method.id
+    }
+    response = client.post(reverse("create-order"), data=a)
+    assert response.status_code == 302
+    assert len(user_normal.cart.cartproduct_set.all()) == 0
+    assert len(Order.objects.filter(user=user_normal)) == 2
+
+
+@pytest.mark.django_db
+def test_post_crate_order_login_user_with_no_cart_product(delivery_method, payment, user_normal_2):
+    client = Client()
+    client.force_login(user_normal_2)
+    assert len(user_normal_2.cart.cartproduct_set.all()) == 0
+    assert user_normal_2.discount_set.first().is_active == False
+    a = {
+        "payment": payment,
+        "delivery_method": delivery_method
+    }
+    response = client.post(reverse("create-order"), data=a)
+    assert response.status_code == 302
+    assert len(user_normal_2.order_set.all()) == 0
+
+
+@pytest.mark.django_db
+def test_post_crate_order_login_user_with_cart_product_with_discount(cart_product, order, user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    assert len(user_normal.cart.cartproduct_set.all()) != 0
+    assert user_normal.discount_set.first().is_active == True
+    a = {
+        "payment": order.payment.id,
+        "delivery_method": order.delivery_method.id
+    }
+    response = client.post(reverse("create-order"), data=a)
+    assert response.status_code == 302
+    assert len(user_normal.cart.cartproduct_set.all()) == 0
+    assert len(Order.objects.filter(user=user_normal)) == 2
+    assert user_normal.discount_set.first().is_active == False

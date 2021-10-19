@@ -21,7 +21,11 @@
                 </div>
                 <div class="container">
                     <a href="{{ item.get_absolute_url }}" class="btn btn-primary">Szczegóły</a>
-                    <a href="{{ item.add_to_cart }}" class="btn btn-secondary">Dodaj do koszyka</a>
+                    {% if user.is_authenticated and item.in_stock %}
+                    <a href="{{ item.add_to_cart }}" class="btn btn-success">Dodaj do koszyka</a>
+                    {% elif user.is_authenticated and not item.in_stock %}
+                     <button class="btn btn-secondary disable">Produkt niedostępny</button>
+                    {% endif %}
                 </div>
             </div>
 

@@ -31,7 +31,7 @@ def user_normal_2():
     user.set_password("password2")
     user.save()
 
-    discount = Discount.objects.create(user=User.objects.get(id=user.id), amount=0.3)
+    discount = Discount.objects.create(user=User.objects.get(id=user.id),is_active=False, amount=0.3)
     discount.save()
     cart = Cart.objects.create(user=User.objects.get(id=user.id),
                                discount=Discount.objects.get(user=User.objects.get(id=user.id)))

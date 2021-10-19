@@ -129,6 +129,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = "/photos/"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = "/login"
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
@@ -137,3 +138,4 @@ BASE_DIR
 )
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+REDIRECT = "login/"

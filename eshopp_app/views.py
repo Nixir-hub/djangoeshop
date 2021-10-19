@@ -23,7 +23,7 @@ class SearchResultsView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         object_list = Product.objects.filter(
-            Q(name__icontains=query) | Q(category__name__icontains=query)
+            Q(name__icontains=query) | Q(categories__name__icontains=query)
         )
         return object_list
 
@@ -260,7 +260,8 @@ class OrderDetailView(UserPassesTestMixin, DetailView):
     template_name = "order_details.html"
 
 
-# TODO: Testy do zrobienia
+# TODO: create accounts_app
+# 6 testów 3 get 3 post
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request):
         object = self.request.user
