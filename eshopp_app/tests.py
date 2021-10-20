@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import User, Group
 from django.test import TestCase, Client
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from eshopp_app.models import Category, Product, Profile, Order, Payment, Delivery, CartProduct
 
@@ -117,22 +117,20 @@ def test_get_edit_product_login_with_permission(user_with_permissions, product):
     assert response.status_code == 200
 
 
+# #nie przepuszcza prawdopodobnie przez img
 # @pytest.mark.django_db
-# def test_edit_product_post(user_with_permissions, product):
+# def test_edit_product_post(user_with_permissions, product, category):
 #     client = Client()
 #     client.force_login(user_with_permissions)
-#     category = Category.objects.create(name="test")
-#     category.save()
 #     a ={
-#         "name": product.name,
-#         "description": product.description,
-#         "stock": product.stock,
-#         "price_netto": product.price_netto,
+#         "name": "test",
+#         "description": "testdescripiton",
+#         "stock": "100",
+#         "price_netto": "1000",
 #         "categories": category,
-#         "vat": product.vat,
-#         "SKU": product.SKU,
-#         "in_stock": product.in_stock,
-#         "img": product.img
+#         "vat": "1",
+#         "SKU": "100",
+#         "in_stock": "True",
 #     }
 #     response = client.post(reverse("edit-product", args=(product.pk,)), data=a)
 #     assert response.status_code == 302
@@ -1072,3 +1070,26 @@ def test_post_crate_order_login_user_with_cart_product_with_discount(cart_produc
     assert len(user_normal.cart.cartproduct_set.all()) == 0
     assert len(Order.objects.filter(user=user_normal)) == 2
     assert user_normal.discount_set.first().is_active == False
+
+
+@pytest.mark.django_db
+def test_search_list_get_empty():
+    client = Client()
+    a = {
+        "q": "test"
+    }
+    response = client.get(reverse('search_results'), data=a)
+    assert response.status_code == 200
+    products_list = response.context['object_list']
+    assert products_list.count() == 0
+
+
+@pytest.mark.django_db
+def test_search_list_get_not_empty(product):
+    client = Client()
+    a = {
+        "q": "x"
+    }
+    response = client.get(reverse('search_results'), data=a)
+    products_list = response.context['object_list']
+    assert products_list.count() == 1

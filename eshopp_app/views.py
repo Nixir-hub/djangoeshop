@@ -15,7 +15,7 @@ class MainMenuView(View):
         return render(request, "base.html", )
 
 
-#TODO: TESTY DO ZROBIENIA
+# 2 tests on
 class SearchResultsView(ListView):
     model = Product
     template_name = 'search_results.html'
@@ -28,7 +28,7 @@ class SearchResultsView(ListView):
         return object_list
 
 
-#2 test #
+# 2 test #
 class ProductsListView(ListView):
     model = Product
     template_name = "product_list.html"
@@ -51,7 +51,7 @@ class AddProductView(PermissionRequiredMixin, CreateView):
     success_url = "/products"
 
 
-# 3 Testy TODO:POST
+# 3 Testy 1post nie przepuszcza przez img prawdopodobnie
 class EditProductView(PermissionRequiredMixin, UpdateView):
     permission_required = "eshopp_app.change_product"
     permission_denied_message = "Nie masz uprawnień"
@@ -222,7 +222,7 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
         return self.object
 
 
-# 3 testy 2get, 1 post
+# 3 testy 2 get, 1 post
 class EditUserProfil(LoginRequiredMixin, UpdateView):
     model = Profile
     fields = ("adres", "phone")

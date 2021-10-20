@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'eshopp_app.apps.EshoppAppConfig',
     "crispy_forms",
-    "sorl.thumbnail"
+    "sorl.thumbnail",
+    "accounts_app"
 ]
 
 MIDDLEWARE = [
