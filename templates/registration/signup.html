@@ -1,1 +1,16 @@
-{% extends 'form.html' %}
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-end">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body center">
+                <h5 class="card-title">Rejestracja Użytkownika</h5>
+                <form id="form" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_ul }}
+                </form>
+            </div>
+        <button form="form" type="submit" class="btn btn-primary btn-block">Stwórz konto!</button>
+        </div>
+    </div>
+{% endblock %}

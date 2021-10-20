@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import DetailView, UpdateView, DeleteView, FormView, ListView
-from accounts_app.form import PasswordChangeForm, SignUpForm
+from accounts_app.form import PasswordChangeForm, SignUpForm, EditProfilForm
 from eshopp_app.models import Profile, Cart, Discount
 
 
@@ -55,8 +55,8 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
 # 3 testy 2 get, 1 post
 class EditUserProfil(LoginRequiredMixin, UpdateView):
     model = Profile
-    fields = ("adres", "phone")
     template_name = "form.html"
+    form_class = EditProfilForm
     success_url = "/profil_details/"
 
     def get_object(self, queryset=None):
