@@ -1,12 +1,12 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User, AnonymousUser
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from eshopp_app.form import SignUpForm, CreateOrderForm, PasswordChangeForm, AddProductForm, AddCategoryForm, \
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from eshopp_app.form import CreateOrderForm, AddProductForm, AddCategoryForm, \
     AddDeliverForm, AddPaymentForm
-from eshopp_app.models import Product, Category, Cart, CartProduct, Order, Discount, Profile, Payment, Delivery
+from eshopp_app.models import Product, Category, Cart, CartProduct, Order,  Payment, Delivery
 
 
 # 2 tests on
@@ -177,75 +177,6 @@ class DelCartProductView(UserPassesTestMixin, View):
         return redirect("/cart/")
 
 
-# 2 TESTY zrobione
-class UserProfilView(LoginRequiredMixin, DetailView):
-    model = User
-    template_name = "profil_detail.html"
-
-    def get_object(self, queryset=None):
-        self.object = self.request.user
-        return self.object
-
-
-# test 1 get 1 post
-class CreateUser(View):
-
-    def get(self, request):
-        form = SignUpForm()
-        return render(request, "registration/signup.html", {"form": form})
-
-    def post(self, request):
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create(username=request.POST.get("username"),
-                                       first_name=request.POST.get("first_name"),
-                                       last_name=request.POST.get("last_name"),
-                                       email=request.POST.get("email"))
-            user.set_password(request.POST.get("password1"))
-            user.save()
-            discount = Discount.objects.create(user=User.objects.get(id=user.id), amount=0.3)
-            discount.save()
-            Cart.objects.create(user=User.objects.get(id=user.id), discount=Discount.objects.get(user=User.objects.get(id=user.id))).save()
-            Profile.objects.create(user=User.objects.get(id=user.id)).save()
-            return redirect("/logout")
-        return render(request, 'form.html', {'form': form})
-
-
-# 2 testy na get 1 test z postem
-class DeleteUserView(LoginRequiredMixin, DeleteView):
-    model = User
-    template_name = "del_form.html"
-    success_url = "/"
-
-    def get_object(self, queryset=None):
-        self.object = self.request.user
-        return self.object
-
-
-# 3 testy 2 get, 1 post
-class EditUserProfil(LoginRequiredMixin, UpdateView):
-    model = Profile
-    fields = ("adres", "phone")
-    template_name = "form.html"
-    success_url = "/profil_details/"
-
-    def get_object(self, queryset=None):
-        self.object = self.request.user.profile
-        return self.object
-
-
-# 3 testy 2 get 1 post
-class EditUserData(LoginRequiredMixin, UpdateView):
-    model = User
-    fields = ("first_name", "last_name")
-    template_name = "form.html"
-    success_url = "/profil_details/"
-
-    def get_object(self, queryset=None):
-        self.object = self.request.user
-        return self.object
-
-
 # 2 testy get
 class OrderDetailView(UserPassesTestMixin, DetailView):
 
@@ -260,7 +191,6 @@ class OrderDetailView(UserPassesTestMixin, DetailView):
     template_name = "order_details.html"
 
 
-# TODO: create accounts_app
 # 6 testów 3 get 3 post
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request):
@@ -272,7 +202,8 @@ class CreateOrderView(LoginRequiredMixin, View):
                 product=Product.objects.get(id=cartproduct.product.id))
             # TODO:wyświetlanie alertu
             if cartproduct.product.stock < cart_product.quantity:
-                return redirect("/cart/", context={"alert":"Nie ma tyle produktu na stanie"})
+                messages.warning(self.request, messages.INFO, 'Za mało produktu na stanie')
+                return redirect("/cart/")
             else:
                 form = CreateOrderForm()
                 return render(request, "form.html", {"form": form})
@@ -373,14 +304,6 @@ class CreateOrderView(LoginRequiredMixin, View):
             return redirect("/cart/")
 
 
-# 3 testy 2 get 1 post
-class PasswordChangeView(LoginRequiredMixin, FormView):
-    model = User
-    form_class = PasswordChangeForm
-    template_name = "form.html"
-    success_url_reverse_lazy = "/profil_details/"
-
-
 # 3 testy get
 class DeliveryListView(PermissionRequiredMixin, ListView):
     permission_required = "eshopp_app.view_delivery"
@@ -463,28 +386,3 @@ class DeletePaymentView(PermissionRequiredMixin, DeleteView):
     model = Payment
     template_name = "del_payment_form.html"
     success_url = "/site_moderator/"
-
-
-# 3 testy
-class UserListView(PermissionRequiredMixin, ListView):
-    permission_required = "eshopp_app.view_payment"
-    model = User
-    fields = "groups"
-    template_name = "user_list.html"
-
-
-# 3 testy 2 get 1 post
-class EditUserPermissionView(PermissionRequiredMixin, UpdateView):
-    permission_required = "eshopp_app.view_payment"
-    model = User
-    fields = ("groups",)
-    template_name = "form.html"
-    success_url = "/site_moderator/"
-
-
-# 3 tests
-class AdminView(PermissionRequiredMixin, View):
-    permission_required = "eshopp_app.view_payment"
-
-    def get(self, request):
-        return render(request, "admin_list_view.html")

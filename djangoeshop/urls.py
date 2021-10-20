@@ -18,13 +18,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from accounts_app.views import CreateUser, UserProfilView, DeleteUserView, EditUserProfil, UserListView,\
+    EditUserPermissionView, AdminView, EditUserData
+
 from eshopp_app.views import MainMenuView, ProductsListView, CategoriesListView, CategoryDetailsView, \
-    ProductDetailsView, CartDetailsView, CreateUser, CartProductCreateView, DelCartProductView, \
-    UserProfilView, DeleteUserView, EditUserProfil, OrderDetailView, CreateOrderView, RemoveCartProductView, \
+    ProductDetailsView, CartDetailsView, CartProductCreateView, DelCartProductView, OrderDetailView, CreateOrderView, RemoveCartProductView, \
     AddProductView, EditProductView, DeleteProductView, AddCategoryView, EditCategoryView, DeleteCategoryView, \
     SearchResultsView, AddDeliveryView, EditDeliveryView, DeleteDeliveryView, DeliveryListView, DeliveryDetailView, \
-    PaymentListView, PaymentDetailView, AddPaymentView, EditPaymentView, DeletePaymentView, AdminView, EditUserData, \
-    UserListView, EditUserPermissionView
+    PaymentListView, PaymentDetailView, AddPaymentView, EditPaymentView, DeletePaymentView \
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
