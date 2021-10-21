@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import DetailView, UpdateView, DeleteView, FormView, ListView
-from accounts_app.form import PasswordChangeForm, SignUpForm, EditProfilForm
+from accounts_app.form import PasswordChangeForm, SignUpForm, EditProfilForm, EditUserForm
 from eshopp_app.models import Profile, Cart, Discount
 
 
@@ -38,7 +38,7 @@ class CreateUser(View):
             Cart.objects.create(user=User.objects.get(id=user.id), discount=Discount.objects.get(user=User.objects.get(id=user.id))).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
             return redirect("/logout")
-        return render(request, 'form.html', {'form': form})
+        return render(request, 'registration/signup.html', {'form': form})
 
 
 # 2 testy na get 1 test z postem
@@ -69,6 +69,7 @@ class EditUserData(LoginRequiredMixin, UpdateView):
     model = User
     fields = ("first_name", "last_name")
     template_name = "form.html"
+    template_class = EditUserForm
     success_url = "/profil_details/"
 
     def get_object(self, queryset=None):
@@ -80,7 +81,6 @@ class EditUserData(LoginRequiredMixin, UpdateView):
 class PasswordChangeView(LoginRequiredMixin, FormView):
     model = User
     form_class = PasswordChangeForm
-    template_name = "form.html"
     success_url_reverse_lazy = "/profil_details/"
 
 

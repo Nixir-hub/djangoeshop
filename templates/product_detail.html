@@ -22,7 +22,7 @@
             {% endfor %}
         </li>
     </uL>
-    {% if user.is_authenticated and product.in_stock %}
+    {% if user.is_authenticated %}
         {% if user.is_authenticated and product.in_stock %}
             <li class="list-group-item"><a href="{{ product.add_to_cart }}" class="btn btn-success">Dodaj do koszyka</a></li>
         {% elif user.is_authenticated and not product.in_stock %}

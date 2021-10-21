@@ -6,12 +6,12 @@ from eshopp_app.models import Profile
 
 class SignUpForm(UserCreationForm):
     error_messages = {
-
         'password_mismatch': ('Hasła nie są takie same.'),
     }
     username = forms.CharField()
     password1 = forms.CharField(label="Hasło", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Powtórz hasło", widget=forms.PasswordInput)
+
     class Meta:
         model = User
         form = "signup.html"
@@ -27,6 +27,10 @@ class SignUpForm(UserCreationForm):
 
 
 class PasswordChangeForm(SetPasswordForm):
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    new_password1 = forms.CharField(widget=forms.PasswordInput)
+    new_password2 = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = User
         form = "password_change_form.html"
@@ -45,4 +49,17 @@ class EditProfilForm(forms.ModelForm):
         labels = {
             "company_adres": "Adres firmy",
             "phone": "Telefon"
+        }
+
+
+class EditUserForm(forms.ModelForm):
+    first_name = forms.CharField(label="Imię")
+    last_name = forms.CharField(label="Nazwisko")
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name")
+        labels = {
+            "first_name": "Imię",
+            "last_name": "Nazwisko"
         }

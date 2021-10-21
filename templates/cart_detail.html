@@ -3,9 +3,9 @@
 {% block content %}
     <div class="jumbotron jumbotron-fluid">
         <h1 class="container">Koszyk</h1>
-        {% if message %}
+        {% if alert %}
         <div class="alert alert-danger">
-            <strong>Uwaga!</strong> {{ message }}
+            <strong>Uwaga!</strong> {{ alert }}
         </div>
         {% endif %}
     </div>

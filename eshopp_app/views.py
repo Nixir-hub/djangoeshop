@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -12,7 +14,17 @@ from eshopp_app.models import Product, Category, Cart, CartProduct, Order,  Paym
 # 2 tests on
 class MainMenuView(View):
     def get(self, request):
-        return render(request, "base.html", )
+        if len(Product.objects.all()) >= 3:
+            products = Product.objects.all()
+            product1 = products[0]
+            product2 = products[1]
+            product3 = products[2]
+        else:
+            return render(request, "base.html")
+        return render(request, "base.html", {"product1": product1,
+                                             "product2": product2,
+                                             "product3": product3,
+                                             })
 
 
 # 2 tests on
@@ -129,11 +141,15 @@ class CartProductCreateView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = Product.objects.get(id=pk)
         user = self.request.user
-
+        cart = self.request.user.cart
         try:
             cart_product = CartProduct.objects.get(product=product, cart=user.cart)
-            cart_product.quantity +=1
-            cart_product.save()
+            if cart_product.quantity >= product.stock:
+                alert = f'Nie można dodać więcej produktu {product.name}, brak na stanie'
+                return render(request, "cart_detail.html", {"alert": alert, "cart": cart})
+            else:
+                cart_product.quantity +=1
+                cart_product.save()
             return redirect("/cart")
         except Exception:
             self.creation = CartProduct.objects.create(cart=user.cart, product=product, quantity=1)
@@ -197,16 +213,6 @@ class CreateOrderView(LoginRequiredMixin, View):
         object = self.request.user
         if len(object.cart.cartproduct_set.all()) == 0:
             return redirect("/cart")
-        for cartproduct in object.cart.cartproduct_set.all():
-            cart_product = object.cart.cartproduct_set.get(
-                product=Product.objects.get(id=cartproduct.product.id))
-            # TODO:wyświetlanie alertu
-            if cartproduct.product.stock < cart_product.quantity:
-                messages.warning(self.request, messages.INFO, 'Za mało produktu na stanie')
-                return redirect("/cart/")
-            else:
-                form = CreateOrderForm()
-                return render(request, "form.html", {"form": form})
         form = CreateOrderForm()
         return render(request, "form.html", {"form": form})
 
