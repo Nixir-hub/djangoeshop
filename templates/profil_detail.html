@@ -10,6 +10,7 @@
                 <li class="list-group-item">Nazwisko: {{ user.last_name }}</li>
                 <li class="list-group-item">email: {{ user.email }}</li>
                 <li class="list-group-item">adres: {{ user.profile.adres }}</li>
+                <li class="list-group-item">adres: {{ user.profile.company_adres|linebreaks }}</li>
                 <li class="list-group-item">telefon: {{ user.profile.phone }}</li>
                 <li class="list-group-item">Zamówienia:
                 {%for item in user.order_set.all %}

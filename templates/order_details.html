@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <h1 class="jumbotron">Szczegóły zamówienia nr. {{ order.order }}</h1>
-    <ul class="list-group">
-        {%for item in order.cart_id.cartproduct_set.all %}
-            <li class="list-group-item">
-                <img class="content left-" src="{{ item.product.img.url }}" alt="{{ item.name }}" width="150px">
-                <a href="{% url "product-detail" item.product.id %}">{{ item }}</a> Cena za 1szt: {{ item.product.price_netto }} zł Ilość: {{ item.quantity }}
-            </li>
-        {% endfor %}
+       <div class="card text-center">
+            <div class="card-header">
+                Produkty
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ category.name }}</h5>
+                <p class="card-text aligned-end">{{ order.products|linebreaks }}</p>
+            </div>
+        </div>
     <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h1 class="card-header">Informacje</h1>
@@ -42,5 +44,5 @@
                     </p>
             </div>
     </div>
-    </ul>
+
 {% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from eshopp_app.models import Profile
 
@@ -28,15 +28,19 @@ class SignUpForm(UserCreationForm):
         }
 
 
-class PasswordChangeForm(SetPasswordForm):
-    old_password = forms.CharField(widget=forms.PasswordInput)
-    new_password1 = forms.CharField(widget=forms.PasswordInput)
-    new_password2 = forms.CharField(widget=forms.PasswordInput)
+class ChangePassword(PasswordChangeForm):
+    error_messages = {
+        'password_mismatch': 'Hasła nie są takie same.',
+    }
+    old_password = forms.CharField(label="Stare hasło", widget=forms.PasswordInput)
+    new_password1 = forms.CharField(label="Nowe hasło", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="Powtórz nowe hasło", widget=forms.PasswordInput)
+
 
     class Meta:
         model = User
         form = "password_change_form.html"
-        # fields = ('old_password', 'new_password1', 'new_password2')
+        fields = ('old_password', 'new_password1', 'new_password2')
         labels = {
             "old_password": "Stare hasło",
             "new_password1": "Nowe hasło",

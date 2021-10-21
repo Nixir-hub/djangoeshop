@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import DetailView, UpdateView, DeleteView, FormView, ListView
-from accounts_app.form import PasswordChangeForm, SignUpForm, EditProfilForm, EditUserForm
+from django.views.generic import DetailView, UpdateView, DeleteView, ListView
+from accounts_app.form import SignUpForm, EditProfilForm, EditUserForm
 from eshopp_app.models import Profile, Cart, Discount
 
 
@@ -21,6 +21,9 @@ class UserProfilView(LoginRequiredMixin, DetailView):
 class CreateUser(View):
 
     def get(self, request):
+        self.object = self.request.user
+        if self.object is not AnonymousUser:
+            return redirect("/logout")
         form = SignUpForm()
         return render(request, "registration/signup.html", {"form": form})
 
@@ -40,7 +43,7 @@ class CreateUser(View):
                 discount=Discount.objects.get(user=User.objects.get(id=user.id))
                                 ).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
-            return redirect("/logout")
+            return redirect("/login")
         return render(request, 'registration/signup.html', {'form': form})
 
 
@@ -70,21 +73,13 @@ class EditUserProfil(LoginRequiredMixin, UpdateView):
 # 3 testy 2 get 1 post
 class EditUserData(LoginRequiredMixin, UpdateView):
     model = User
-    fields = ("first_name", "last_name")
     template_name = "form.html"
-    template_class = EditUserForm
+    form_class = EditUserForm
     success_url = "/profil_details/"
 
     def get_object(self, queryset=None):
         self.object = self.request.user
         return self.object
-
-
-# 3 testy 2 get 1 post
-class PasswordChangeView(LoginRequiredMixin, FormView):
-    model = User
-    form_class = PasswordChangeForm
-    success_url_reverse_lazy = "/profil_details/"
 
 
 # 3 testy

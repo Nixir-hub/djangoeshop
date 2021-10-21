@@ -134,14 +134,16 @@ class Cart(models.Model):
         brutto_summary_price = 0
         for product in products:
             brutto_summary_price += product.quantity * (
-                    product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
+                product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
         return round(brutto_summary_price, 2)
 
     def get_summary_brutto_after_discount(self):
         products = self.cartproduct_set.all()
         brutto_summary_price = 0
         for product in products:
-            brutto_summary_price += product.quantity * (product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
+            brutto_summary_price += \
+                product.quantity * \
+                (product.product.price_netto + product.product.price_netto * float(product.product.get_vat_display()))
         return round(brutto_summary_price - brutto_summary_price * self.user.discount_set.first().amount, 2)
 
 
@@ -152,7 +154,6 @@ class CartProduct(models.Model):
 
     class Meta:
            models.UniqueConstraint(fields=['product', 'cart'], name='unique_product_cart')
-
 
     def __str__(self):
         return f"{self.product}"
@@ -217,6 +218,7 @@ class Order(models.Model):
     order = models.IntegerField(unique=True)
     delivery_method = models.ForeignKey(Delivery, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    products = models.TextField(null=True)
     price = models.FloatField()
     is_payed = models.BooleanField(default=False)
     in_completing = models.BooleanField(default=False)

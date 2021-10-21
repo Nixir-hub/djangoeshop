@@ -3,12 +3,14 @@ from eshopp_app.models import Order, Product, Category, Delivery, Payment
 
 
 class CreateOrderForm(forms.ModelForm):
+
     class Meta:
         model = Order
         fields = ("payment", "delivery_method")
 
 
 class AddProductForm(forms.ModelForm):
+
     class Meta:
         model = Product
         exclude = ("expire_date",)

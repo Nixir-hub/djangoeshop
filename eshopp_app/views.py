@@ -219,11 +219,19 @@ class CreateOrderView(LoginRequiredMixin, View):
         if form.is_valid():
             if obj.cart.discount.is_active:
                 if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+                    products = []
+                    n = 0
+                    for cartproduct in obj.cart.cartproduct_set.all():
+                        n += 1
+                        name = cartproduct.product.name
+                        quantity = cartproduct.quantity
+                        products.append(f"{n}. Produkt: {name}, Ilość: {quantity}")
                     order = Order.objects.create(
                                         payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                         order=(Order.objects.last().order+1),
                                         delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
                                         user=obj,
+                                        products="\n ".join(products),
                                         price=obj.cart.get_summary_brutto_after_discount(),
                                         is_payed=True
                              )
@@ -243,10 +251,18 @@ class CreateOrderView(LoginRequiredMixin, View):
                     obj.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
                 else:
+                    products = []
+                    n = 0
+                    for cartproduct in obj.cart.cartproduct_set.all():
+                        n += 1
+                        name = cartproduct.product.name
+                        quantity = cartproduct.quantity
+                        products.append(f"{n}. Produkt: {name}, Ilość: {quantity}")
                     order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                                  order=(Order.objects.last().order + 1),
                                                  delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
                                                  user=obj,
+                                                 products="\n ".join(products),
                                                  price=obj.cart.get_summary_brutto_after_discount(),
                                                  )
                     order.save()
@@ -265,11 +281,19 @@ class CreateOrderView(LoginRequiredMixin, View):
                     obj.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
             elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
+                products = []
+                n = 0
+                for cartproduct in obj.cart.cartproduct_set.all():
+                    n += 1
+                    name = cartproduct.product.name
+                    quantity = cartproduct.quantity
+                    products.append(f"{n}. Produkt: {name}, Ilość: {quantity}")
                 order = Order.objects.create(
                             payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                             order=(Order.objects.last().order+1),
                             delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
                             user=obj,
+                            products="\n ".join(products),
                             price=obj.cart.get_summary_brutto(),
                             is_payed=True
                          )
@@ -286,10 +310,18 @@ class CreateOrderView(LoginRequiredMixin, View):
                 obj.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
             else:
+                products = []
+                n = 0
+                for cartproduct in obj.cart.cartproduct_set.all():
+                    n += 1
+                    name = cartproduct.product.name
+                    quantity = cartproduct.quantity
+                    products.append(f"{n}. Produkt: {name}, Ilość: {quantity}")
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                              order=(Order.objects.last().order + 1),
                                              delivery_method=Delivery.objects.get(
                                                  id=request.POST.get("delivery_method")),
+                                             products="\n ".join(products),
                                              user=obj,
                                              price=obj.cart.get_summary_brutto(),
                                              )
