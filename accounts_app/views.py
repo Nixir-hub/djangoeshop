@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import DetailView, UpdateView, DeleteView, ListView
@@ -21,9 +21,6 @@ class UserProfilView(LoginRequiredMixin, DetailView):
 class CreateUser(View):
 
     def get(self, request):
-        self.object = self.request.user
-        if self.object is not AnonymousUser:
-            return redirect("/logout")
         form = SignUpForm()
         return render(request, "registration/signup.html", {"form": form})
 
@@ -43,7 +40,7 @@ class CreateUser(View):
                 discount=Discount.objects.get(user=User.objects.get(id=user.id))
                                 ).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
-            return redirect("/login")
+            return redirect("/logout")
         return render(request, 'registration/signup.html', {'form': form})
 
 
