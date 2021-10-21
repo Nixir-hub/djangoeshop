@@ -13,8 +13,9 @@ def user_normal():
     user.save()
     discount = Discount.objects.create(user=User.objects.get(id=user.id), amount=0.3)
     discount.save()
-    cart = Cart.objects.create(user=User.objects.get(id=user.id),
-                        discount=Discount.objects.get(user=User.objects.get(id=user.id)))
+    cart = Cart.objects.create(
+        user=User.objects.get(id=user.id),
+        discount=Discount.objects.get(user=User.objects.get(id=user.id)))
 
     cart.save()
     profile = Profile.objects.create(user=User.objects.get(id=user.id), adres="xxx", phone=1112)
@@ -31,7 +32,7 @@ def user_normal_2():
     user.set_password("password2")
     user.save()
 
-    discount = Discount.objects.create(user=User.objects.get(id=user.id),is_active=False, amount=0.3)
+    discount = Discount.objects.create(user=User.objects.get(id=user.id), is_active=False, amount=0.3)
     discount.save()
     cart = Cart.objects.create(user=User.objects.get(id=user.id),
                                discount=Discount.objects.get(user=User.objects.get(id=user.id)))
@@ -46,7 +47,7 @@ def products():
     lst = []
     for x in range(3):
         lst.append(Product.objects.create(name=x, description=x, stock=x, price_netto=x, vat=x, SKU=x, in_stock=True,
-                                          img="chair.jpeg"))
+                                          img="photos/chair.jpeg"))
     return lst
 
 
@@ -165,8 +166,9 @@ def order(payment, delivery_method, user_normal):
 def users():
     lst = []
     for x in range(5):
-        lst.append(User.objects.create(username=x,
-                               first_name=x,
-                               last_name=x,
-                               email=x))
+        lst.append(User.objects.create(
+            username=x,
+            first_name=x,
+            last_name=x,
+            email=x))
     return lst

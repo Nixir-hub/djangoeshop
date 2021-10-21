@@ -35,7 +35,10 @@ class CreateUser(View):
             user.save()
             discount = Discount.objects.create(user=User.objects.get(id=user.id), amount=0.3)
             discount.save()
-            Cart.objects.create(user=User.objects.get(id=user.id), discount=Discount.objects.get(user=User.objects.get(id=user.id))).save()
+            Cart.objects.create(
+                user=User.objects.get(id=user.id),
+                discount=Discount.objects.get(user=User.objects.get(id=user.id))
+                                ).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
             return redirect("/logout")
         return render(request, 'registration/signup.html', {'form': form})

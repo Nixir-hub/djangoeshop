@@ -1,8 +1,5 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -19,12 +16,12 @@ class MainMenuView(View):
             product1 = products[0]
             product2 = products[1]
             product3 = products[2]
+            return render(request, "base.html", {"product1": product1,
+                                                 "product2": product2,
+                                                 "product3": product3,
+                                                 })
         else:
             return render(request, "base.html")
-        return render(request, "base.html", {"product1": product1,
-                                             "product2": product2,
-                                             "product3": product3,
-                                             })
 
 
 # 2 tests on
@@ -148,7 +145,7 @@ class CartProductCreateView(LoginRequiredMixin, View):
                 alert = f'Nie można dodać więcej produktu {product.name}, brak na stanie'
                 return render(request, "cart_detail.html", {"alert": alert, "cart": cart})
             else:
-                cart_product.quantity +=1
+                cart_product.quantity += 1
                 cart_product.save()
             return redirect("/cart")
         except Exception:
@@ -210,31 +207,32 @@ class OrderDetailView(UserPassesTestMixin, DetailView):
 # 6 testów 3 get 3 post
 class CreateOrderView(LoginRequiredMixin, View):
     def get(self, request):
-        object = self.request.user
-        if len(object.cart.cartproduct_set.all()) == 0:
+        obj = self.request.user
+        if len(obj.cart.cartproduct_set.all()) == 0:
             return redirect("/cart")
         form = CreateOrderForm()
         return render(request, "form.html", {"form": form})
 
     def post(self, request):
-        object = self.request.user
+        obj = self.request.user
         form = CreateOrderForm(request.POST)
         if form.is_valid():
-            if object.cart.discount.is_active:
+            if obj.cart.discount.is_active:
                 if Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
-                    order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
-                            order=(Order.objects.last().order+1),
-                            delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
-                            user=object,
-                            price=object.cart.get_summary_brutto_after_discount(),
-                            is_payed=True
+                    order = Order.objects.create(
+                                        payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                                        order=(Order.objects.last().order+1),
+                                        delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
+                                        user=obj,
+                                        price=obj.cart.get_summary_brutto_after_discount(),
+                                        is_payed=True
                              )
                     order.save()
-                    discount = object.cart.discount
+                    discount = obj.cart.discount
                     discount.is_active = False
                     discount.save()
-                    for cartproduct in object.cart.cartproduct_set.all():
-                        cart_product = object.cart.cartproduct_set.get(
+                    for cartproduct in obj.cart.cartproduct_set.all():
+                        cart_product = obj.cart.cartproduct_set.get(
                             product=Product.objects.get(id=cartproduct.product.id))
                         if cartproduct.product.stock > 0:
                             cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
@@ -242,21 +240,21 @@ class CreateOrderView(LoginRequiredMixin, View):
                             if cartproduct.product.stock == 0:
                                 cartproduct.product.in_stock = False
                                 cartproduct.product.save()
-                    object.cart.cartproduct_set.all().delete()
+                    obj.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
                 else:
                     order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                                  order=(Order.objects.last().order + 1),
                                                  delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
-                                                 user=object,
-                                                 price=object.cart.get_summary_brutto_after_discount(),
+                                                 user=obj,
+                                                 price=obj.cart.get_summary_brutto_after_discount(),
                                                  )
                     order.save()
-                    discount = object.cart.discount
+                    discount = obj.cart.discount
                     discount.is_active = False
                     discount.save()
-                    for cartproduct in object.cart.cartproduct_set.all():
-                        cart_product = object.cart.cartproduct_set.get(
+                    for cartproduct in obj.cart.cartproduct_set.all():
+                        cart_product = obj.cart.cartproduct_set.get(
                             product=Product.objects.get(id=cartproduct.product.id))
                         if cartproduct.product.stock > 0:
                             cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
@@ -264,19 +262,20 @@ class CreateOrderView(LoginRequiredMixin, View):
                             if cartproduct.product.stock == 0:
                                 cartproduct.product.in_stock = False
                                 cartproduct.product.save()
-                    object.cart.cartproduct_set.all().delete()
+                    obj.cart.cartproduct_set.all().delete()
                     return redirect("/profil_details/")
             elif Payment.objects.get(pk=int(request.POST.get("payment"))).is_done:
-                order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
+                order = Order.objects.create(
+                            payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                             order=(Order.objects.last().order+1),
                             delivery_method=Delivery.objects.get(id=request.POST.get("delivery_method")),
-                            user=object,
-                            price=object.cart.get_summary_brutto(),
+                            user=obj,
+                            price=obj.cart.get_summary_brutto(),
                             is_payed=True
                          )
                 order.save()
-                for cartproduct in object.cart.cartproduct_set.all():
-                    cart_product = object.cart.cartproduct_set.get(
+                for cartproduct in obj.cart.cartproduct_set.all():
+                    cart_product = obj.cart.cartproduct_set.get(
                         product=Product.objects.get(id=cartproduct.product.id))
                     if cartproduct.product.stock > 0:
                         cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
@@ -284,19 +283,19 @@ class CreateOrderView(LoginRequiredMixin, View):
                         if cartproduct.product.stock == 0:
                             cartproduct.product.in_stock = False
                             cartproduct.product.save()
-                object.cart.cartproduct_set.all().delete()
+                obj.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
             else:
                 order = Order.objects.create(payment=Payment.objects.get(pk=int(request.POST.get("payment"))),
                                              order=(Order.objects.last().order + 1),
                                              delivery_method=Delivery.objects.get(
                                                  id=request.POST.get("delivery_method")),
-                                             user=object,
-                                             price=object.cart.get_summary_brutto(),
+                                             user=obj,
+                                             price=obj.cart.get_summary_brutto(),
                                              )
                 order.save()
-                for cartproduct in object.cart.cartproduct_set.all():
-                    cart_product = object.cart.cartproduct_set.get(
+                for cartproduct in obj.cart.cartproduct_set.all():
+                    cart_product = obj.cart.cartproduct_set.get(
                         product=Product.objects.get(id=cartproduct.product.id))
                     if cartproduct.product.stock > 0:
                         cartproduct.product.stock = cartproduct.product.stock - cart_product.quantity
@@ -304,7 +303,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                         if cartproduct.product.stock == 0:
                             cartproduct.product.in_stock = False
                             cartproduct.product.save()
-                object.cart.cartproduct_set.all().delete()
+                obj.cart.cartproduct_set.all().delete()
                 return redirect("/profil_details/")
         else:
             return redirect("/cart/")
