@@ -1,19 +1,42 @@
 import pytest
-from django.contrib.auth.models import User, Group, AnonymousUser
+from django.contrib.auth.models import User, Group
 from django.test import Client
 from django.urls import reverse
 from eshopp_app.models import Category, Product, Profile, Order, Payment, Delivery, CartProduct
 
 
 @pytest.mark.django_db
-def test_get_main_view_no_login(products):
+def test_get_main_view_with_products_no_login(products):
     client = Client()
     response = client.get(reverse("main-menu"))
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_post_main_view_login(user_normal):
+def test_get_main_view_login_without_products(user_normal):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("main-menu"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_get_main_view_login(user_normal, products):
+    client = Client()
+    client.force_login(user_normal)
+    response = client.get(reverse("main-menu"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_post_main_view_with_products_no_login(products):
+    client = Client()
+    response = client.post(reverse("main-menu"))
+    assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_post_main_view_login_without_products(user_normal):
     client = Client()
     client.force_login(user_normal)
     response = client.post(reverse("main-menu"))
@@ -97,6 +120,25 @@ def test_post_add_product(user_with_permissions):
 
 
 @pytest.mark.django_db
+def test_post_add_product_no_login():
+    client = Client()
+    category = Category.objects.create(name="test", img="photos/furniture.jpeg")
+    a = {
+        "name": "xsda",
+        "description": "xsda",
+        "stock": "23",
+        "price_netto": "12",
+        "categories": category.id,
+        "vat": "1",
+        "SKU": "10",
+    }
+    response = client.post(reverse("add-product"), data=a)
+    assert response.status_code == 302
+    with pytest.raises(Product.DoesNotExist):
+        Product.objects.get(**a)
+
+
+@pytest.mark.django_db
 def test_get_product_edit_no_login(product):
     client = Client()
     response = client.get(reverse("edit-product", args=(product.pk,)))
@@ -119,23 +161,24 @@ def test_get_edit_product_login_with_permission(user_with_permissions, product):
     assert response.status_code == 200
 
 
-# #nie przepuszcza prawdopodobnie przez img
-# @pytest.mark.django_db
-# def test_edit_product_post(user_with_permissions, product, category):
-#     client = Client()
-#     client.force_login(user_with_permissions)
-#     a ={
-#         "name": "test",
-#         "description": "testdescripiton",
-#         "stock": "100",
-#         "price_netto": "1000",
-#         "categories": category,
-#         "vat": "1",
-#         "SKU": "100",
-#         "in_stock": "True",
-#     }
-#     response = client.post(reverse("edit-product", args=(product.pk,)), data=a)
-#     assert response.status_code == 302
+@pytest.mark.django_db
+def test_edit_product_post(user_with_permissions, product, category):
+    client = Client()
+    client.force_login(user_with_permissions)
+    a ={
+        "name": "test",
+        "description": "testdescripiton",
+        "stock": "100",
+        "price_netto": "1000",
+        "categories": category.id,
+        "vat": "1",
+        "SKU": "100",
+        "in_stock": "True",
+    }
+    response = client.post(reverse("edit-product", args=(product.pk,)), data=a)
+    assert response.status_code == 302
+    assert Product.objects.get(id=product.pk).name == "test"
+    assert Product.objects.get(id=product.pk).description == "testdescripiton"
 
 @pytest.mark.django_db
 def test_get_delete_product_no_login(product):
@@ -148,26 +191,26 @@ def test_get_delete_product_no_login(product):
 def test_get_delete_product_login_normal(user_normal, product):
     client = Client()
     client.force_login(user_normal)
-    response = client.get(reverse("delete-category", args=(product.pk,)))
+    response = client.get(reverse("delete-product", args=(product.pk,)))
     assert response.status_code == 403
 
 
 @pytest.mark.django_db
-def test_get_del_product_login_with_perm(user_with_permissions, category):
+def test_get_del_product_login_with_perm(user_with_permissions, product):
     client = Client()
     client.force_login(user_with_permissions)
-    response = client.get(reverse("delete-category", args=(category.pk,)))
+    response = client.get(reverse("delete-product", args=(product.pk,)))
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_del_category_post(user_with_permissions, product):
+def test_del_product_post_login_user_with_permission(user_with_permissions, product):
     client = Client()
     client.force_login(user_with_permissions)
 
     response = client.post(reverse("delete-product", args=(product.pk,)))
     assert response.status_code == 302
-    with pytest.raises(Category.DoesNotExist):
+    with pytest.raises(Product.DoesNotExist):
         Product.objects.get(id=product.pk)
 
 
@@ -314,13 +357,6 @@ def test_get_cart_view_login_normal(user_normal):
     client.force_login(user_normal)
     response = client.get(reverse("cart-view"))
     assert response.status_code == 200
-
-# Czy tak testować?
-# @pytest.mark.django_db
-# def test_get_delete_cart_product_no_login(cart_product):
-#     client = Client()
-#     response = client.get(reverse("delete-cart-product", args=(cart_product.pk,)))
-#     assert response.status_code == 302
 
 
 @pytest.mark.django_db

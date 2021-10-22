@@ -67,6 +67,7 @@ def user_with_permissions():
     p10 = Permission.objects.get(codename="add_payment")
     p11 = Permission.objects.get(codename="change_payment")
     p12 = Permission.objects.get(codename="delete_payment")
+    p13 = Permission.objects.get(codename="delete_product")
     u.user_permissions.add(p)
     u.user_permissions.add(p1)
     u.user_permissions.add(p2)
@@ -80,6 +81,7 @@ def user_with_permissions():
     u.user_permissions.add(p10)
     u.user_permissions.add(p11)
     u.user_permissions.add(p12)
+    u.user_permissions.add(p13)
     return u
 
 

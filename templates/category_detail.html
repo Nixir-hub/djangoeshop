@@ -12,7 +12,12 @@
         <ul class="container">
             {%for item in category.product_set.all %}
                 <li class="list-group-item">
-                <div class="card text-center" style="width: 18rem;">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                          <div class="card-body">
+                          <div class="container"></div>
+                        <div class="card text-center" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.img.url }}" alt="{{ item.name }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ item.name }}</h5>
@@ -29,6 +34,17 @@
                         <button class="btn btn-secondary disable">Produkt niedostępny</button>
                     {% endif %}
                 </div>
+                    </div>
+                </div>
+            </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Opis</h5>
+                            <p class="card-text">{{ item.description }}</p>
+                      </div>
+                    </div>
+                  </div>
                 </li>
             {% endfor %}
         </ul>
