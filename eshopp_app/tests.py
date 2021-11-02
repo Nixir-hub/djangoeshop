@@ -180,6 +180,7 @@ def test_edit_product_post(user_with_permissions, product, category):
     assert Product.objects.get(id=product.pk).name == "test"
     assert Product.objects.get(id=product.pk).description == "testdescripiton"
 
+
 @pytest.mark.django_db
 def test_get_delete_product_no_login(product):
     client = Client()

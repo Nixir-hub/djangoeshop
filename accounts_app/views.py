@@ -40,7 +40,7 @@ class CreateUser(View):
                 discount=Discount.objects.get(user=User.objects.get(id=user.id))
                                 ).save()
             Profile.objects.create(user=User.objects.get(id=user.id)).save()
-            return redirect("/logout")
+            return redirect("/login")
         return render(request, 'registration/signup.html', {'form': form})
 
 
