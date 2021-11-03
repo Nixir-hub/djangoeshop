@@ -2,7 +2,7 @@
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#djangoeshop)
 
 # ➤ djangoeshop
-
+With this app you can create your e-shop
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#djangoeshop)
 
 # ➤ Requirements
