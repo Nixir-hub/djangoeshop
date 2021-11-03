@@ -12,7 +12,7 @@ With this app you can create your e-shop
  pytz==2019.2,
  pytest==6.2.5,
  pytest-django==4.4.0,
- sorl-thumbnail==12.7.0,
+ sorl-thumbnail==12.7.0
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#djangoeshop)
 
